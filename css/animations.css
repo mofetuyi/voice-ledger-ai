@@ -1,0 +1,177 @@
+/* ===================================
+   VOICE LEDGER AI - Animations
+=================================== */
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInLeft {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 30px rgba(108,60,245,0.4); }
+  50%       { box-shadow: 0 0 60px rgba(108,60,245,0.7), 0 0 90px rgba(6,182,212,0.3); }
+}
+
+@keyframes pulse-fab {
+  0%, 100% { transform: scale(1); box-shadow: 0 4px 20px rgba(108,60,245,0.4); }
+  50%       { transform: scale(1.08); box-shadow: 0 8px 30px rgba(108,60,245,0.7); }
+}
+
+@keyframes load-progress {
+  0%   { width: 0%; }
+  30%  { width: 40%; }
+  60%  { width: 70%; }
+  85%  { width: 90%; }
+  100% { width: 100%; }
+}
+
+@keyframes wave-anim {
+  0%, 100% { transform: scaleY(0.5); opacity: 0.5; }
+  50%       { transform: scaleY(1.5); opacity: 1; }
+}
+
+@keyframes typing-bounce {
+  0%, 100% { transform: translateY(0); opacity: 0.4; }
+  50%       { transform: translateY(-6px); opacity: 1; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes alertPulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ── Skeleton loader ── */
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-card2) 25%, var(--bg-hover) 50%, var(--bg-card2) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 6px;
+}
+.skeleton-text { height: 14px; margin-bottom: 8px; }
+.skeleton-text:last-child { width: 70%; }
+.skeleton-title { height: 20px; width: 60%; margin-bottom: 12px; }
+
+/* ── Page transition ── */
+.page.active { animation: fadeInUp 0.35s cubic-bezier(0.4,0,0.2,1); }
+
+/* ── Stagger children animation ── */
+.stagger-children > * {
+  animation: fadeInUp 0.4s ease both;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+
+/* ── Gauge animation ── */
+.gauge-animated {
+  transition: stroke-dasharray 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ── Card hover glow ── */
+.card-glow:hover {
+  box-shadow: 0 0 24px rgba(108,60,245,0.2), var(--shadow);
+}
+
+/* ── Mic pulse when recording ── */
+.mic-pulse {
+  animation: pulse-fab 0.8s ease-in-out infinite;
+}
+
+/* ── Number counter animation ── */
+.count-animate { animation: countUp 0.5s ease; }
+
+/* ── Alert pulse ── */
+.alert-new { animation: alertPulse 2s ease infinite; }
+
+/* ── Gradient text animation ── */
+.gradient-text-animate {
+  background: linear-gradient(270deg, #6c3cf5, #06b6d4, #f59e0b, #22c55e, #6c3cf5);
+  background-size: 300% 300%;
+  animation: gradientShift 4s ease infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Floating particles (decorative) ── */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.08;
+  animation: float-particle linear infinite;
+}
+
+@keyframes float-particle {
+  0%   { transform: translateY(0) scale(1); opacity: 0; }
+  10%  { opacity: 0.08; }
+  90%  { opacity: 0.08; }
+  100% { transform: translateY(-100vh) scale(0.5); opacity: 0; }
+}
+
+/* ── Success checkmark ── */
+@keyframes checkmark {
+  0%   { stroke-dashoffset: 100; }
+  100% { stroke-dashoffset: 0; }
+}
+.checkmark-path {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: checkmark 0.6s ease forwards;
+}
+
+/* ── Loading spinner ── */
+.spinner {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 2px solid var(--border-light);
+  border-top-color: var(--primary);
+  animation: spin 0.8s linear infinite;
+}
+
+/* ── Hover lift ── */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+}

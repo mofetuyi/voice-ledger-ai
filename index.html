@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="Voice Ledger AI – Smart business finance management with AI by TuyiTek Digital Solutions. Track profits, inventory, debts, generate invoices and get daily business summaries in Yoruba, Igbo, Pidgin, Hausa and all Nigerian languages." />
+  <meta name="keywords" content="voice ledger, AI business assistant, TuyiTek Digital Solutions, Nigeria, Yoruba, Igbo, Pidgin, Hausa, smart ledger, invoice generator, debt tracker, SME accounting" />
+  <meta name="author" content="TuyiTek Digital Solutions" />
+  <meta name="theme-color" content="#6c3cf5" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Voice Ledger AI" />
+  <title>Voice Ledger AI – by TuyiTek Digital Solutions</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/png" href="logo.png" />
+  <link rel="apple-touch-icon" href="logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+</head>
+<body>
+  <!-- Splash / Loading Screen -->
+  <div id="splash-screen">
+    <div class="splash-content">
+      <div class="splash-logo">
+        <img src="logo.png" alt="TuyiTek Logo" style="width:72px;height:72px;object-fit:contain;border-radius:16px;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+        <div class="tuyitek-logo" style="display:none">TT</div>
+      </div>
+      <h1 class="splash-title">Voice Ledger <span class="ai-badge">AI</span></h1>
+      <p class="splash-sub" data-i18n="powered_by">Powered by TuyiTek Digital Solutions</p>
+      <div class="splash-loader">
+        <div class="loader-bar"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <div class="brand-logo" style="background:none;box-shadow:none;padding:0;overflow:hidden">
+          <img src="logo.png" alt="TuyiTek" style="width:40px;height:40px;object-fit:contain;border-radius:8px;" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+          <div class="tuyitek-logo-sm" style="display:none">TT</div>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Voice Ledger</span>
+          <span class="brand-tag">AI</span>
+        </div>
+      </div>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">✕</button>
+    </div>
+
+    <nav class="sidebar-nav" role="navigation" aria-label="Main navigation">
+      <a href="#" class="nav-item active" data-page="dashboard" id="nav-dashboard">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label" data-i18n="nav_dashboard">Dashboard</span>
+      </a>
+      <a href="#" class="nav-item" data-page="ledger" id="nav-ledger">
+        <span class="nav-icon">📒</span>
+        <span class="nav-label" data-i18n="nav_ledger">Smart Ledger</span>
+      </a>
+      <a href="#" class="nav-item" data-page="pnl" id="nav-pnl">
+        <span class="nav-icon">📈</span>
+        <span class="nav-label" data-i18n="nav_pnl">Profit & Loss</span>
+      </a>
+      <a href="#" class="nav-item" data-page="inventory" id="nav-inventory">
+        <span class="nav-icon">📦</span>
+        <span class="nav-label" data-i18n="nav_inventory">Inventory</span>
+      </a>
+      <a href="#" class="nav-item" data-page="debts" id="nav-debts">
+        <span class="nav-icon">💳</span>
+        <span class="nav-label" data-i18n="nav_debts">Debt Manager</span>
+      </a>
+      <a href="#" class="nav-item" data-page="invoice" id="nav-invoice">
+        <span class="nav-icon">🧾</span>
+        <span class="nav-label" data-i18n="nav_invoice">Invoice Generator</span>
+      </a>
+      <a href="#" class="nav-item" data-page="ask" id="nav-ask">
+        <span class="nav-icon">🤖</span>
+        <span class="nav-label" data-i18n="nav_ask">Ask Your Business</span>
+      </a>
+      <a href="#" class="nav-item" data-page="summary" id="nav-summary">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label" data-i18n="nav_summary">Daily Summary</span>
+      </a>
+      <a href="#" class="nav-item" data-page="health" id="nav-health">
+        <span class="nav-icon">💚</span>
+        <span class="nav-label" data-i18n="nav_health">Business Health</span>
+      </a>
+      <a href="#" class="nav-item" data-page="alerts" id="nav-alerts">
+        <span class="nav-icon">🔔</span>
+        <span class="nav-label" data-i18n="nav_alerts">Smart Alerts</span>
+        <span class="nav-badge" id="alertBadge">3</span>
+      </a>
+      <a href="#" class="nav-item" data-page="reports" id="nav-reports">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label" data-i18n="nav_reports">Financial Reports</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="lang-selector" id="langSelector">
+        <span class="lang-icon">🌍</span>
+        <select id="languageSelect" aria-label="Select language">
+          <option value="en">English (US/UK)</option>
+          <option value="yo">Yorùbá (Pure)</option>
+          <option value="pcm">Naija (Pidgin)</option>
+          <option value="ig">Asụsụ Igbo</option>
+          <option value="ha">Harshen Hausa</option>
+          <option value="edo">Ẹ̀dó (Benin)</option>
+        </select>
+      </div>
+      <div class="backup-quick-row" style="padding: 10px 14px; display: flex; gap: 8px;">
+        <button id="backupDataBtn" class="btn btn-ghost" style="flex:1; font-size:11px; padding:6px 8px;" title="Export Backup Data">💾 Backup</button>
+        <button id="demoDataBtn" class="btn btn-ghost" style="flex:1; font-size:11px; padding:6px 8px;" title="Load Sample Demo Data">⚡ Sample</button>
+      </div>
+      <div class="powered-by" data-i18n="powered_by">Powered by <strong>TuyiTek Digital Solutions</strong></div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content" id="mainContent">
+
+    <!-- Top Header Bar -->
+    <header class="top-header">
+      <div class="header-left">
+        <button class="menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
+        <div class="page-breadcrumb" id="pageBreadcrumb" data-i18n="nav_dashboard">Dashboard</div>
+      </div>
+      <div class="header-center">
+        <div class="voice-trigger-mini" id="voiceTriggerMini" title="Voice Command">
+          <span class="mic-icon">🎙️</span>
+          <span class="voice-label-mini" id="voiceLabelMini" data-i18n="tap_to_speak">Tap to speak</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="header-date" id="headerDate"></div>
+        <div class="user-avatar" id="userAvatar" title="Business Owner" data-i18n-title="user_bo">TT</div>
+      </div>
+    </header>
+
+    <!-- Voice Command Overlay -->
+    <div class="voice-overlay" id="voiceOverlay">
+      <div class="voice-modal">
+        <div class="voice-waves">
+          <div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div><div class="wave"></div>
+        </div>
+        <p class="voice-listening-text" id="voiceListeningText" data-i18n="voice_listening">Listening...</p>
+        <p class="voice-transcript" id="voiceTranscript"></p>
+        <button class="voice-stop-btn" id="voiceStopBtn" data-i18n="voice_stop">Stop</button>
+      </div>
+    </div>
+
+    <!-- PAGE: Dashboard -->
+    <section class="page active" id="page-dashboard">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" data-i18n="dashboard_title">Business Dashboard</h1>
+          <p class="page-subtitle"><span data-i18n="dashboard_sub">Your business at a glance</span> – <span id="dashDate"></span></p>
+        </div>
+        <div class="voice-fab" id="voiceFab" title="Voice Command" data-i18n-title="tap_to_speak">
+          <span>🎙️</span>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card revenue">
+          <div class="kpi-icon">💰</div>
+          <div class="kpi-info">
+            <span class="kpi-label" data-i18n="total_revenue">Total Revenue</span>
+            <span class="kpi-value" id="kpiRevenue">₦0</span>
+            <span class="kpi-change positive" id="kpiRevenueChange">+0%</span>
+          </div>
+        </div>
+        <div class="kpi-card expenses">
+          <div class="kpi-icon">💸</div>
+          <div class="kpi-info">
+            <span class="kpi-label" data-i18n="total_expenses">Total Expenses</span>
+            <span class="kpi-value" id="kpiExpenses">₦0</span>
+            <span class="kpi-change negative" id="kpiExpensesChange">+0%</span>
+          </div>
+        </div>
+        <div class="kpi-card profit">
+          <div class="kpi-icon">📈</div>
+          <div class="kpi-info">
+            <span class="kpi-label" data-i18n="net_profit">Net Profit</span>
+            <span class="kpi-value" id="kpiProfit">₦0</span>
+            <span class="kpi-change" id="kpiProfitChange">0%</span>
+          </div>
+        </div>
+        <div class="kpi-card debts-owed">
+          <div class="kpi-icon">⚠️</div>
+          <div class="kpi-info">
+            <span class="kpi-label" data-i18n="total_debts_owed">Total Debts Owed</span>
+            <span class="kpi-value" id="kpiDebts">₦0</span>
+            <span class="kpi-change" id="kpiDebtsChange">0 customers</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Health Score + Chart Row -->
+      <div class="dashboard-row">
+        <div class="card health-score-card">
+          <h3 data-i18n="health_score_card_title">Business Health Score</h3>
+          <div class="health-gauge" id="dashHealthGauge">
+            <svg viewBox="0 0 200 120" class="gauge-svg">
+              <defs>
+                <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#ef4444"/>
+                  <stop offset="50%" style="stop-color:#f59e0b"/>
+                  <stop offset="100%" style="stop-color:#22c55e"/>
+                </linearGradient>
+              </defs>
+              <path d="M 20 100 A 80 80 0 0 1 180 100" stroke="#1e293b" stroke-width="18" fill="none"/>
+              <path id="gaugeFill" d="M 20 100 A 80 80 0 0 1 180 100" stroke="url(#gaugeGrad)" stroke-width="18" fill="none" stroke-dasharray="0 251" stroke-linecap="round"/>
+              <text x="100" y="95" text-anchor="middle" class="gauge-score" id="gaugeScore">0</text>
+              <text x="100" y="112" text-anchor="middle" class="gauge-label-text" id="gaugeLabelText" data-i18n="health_score_card_title">Health Score</text>
+            </svg>
+          </div>
+          <p class="health-status" id="dashHealthStatus">Calculating...</p>
+        </div>
+
+        <div class="card chart-card">
+          <div class="card-header-row">
+            <h3 data-i18n="revenue_vs_expenses">Revenue vs Expenses</h3>
+            <select class="chart-filter" id="chartFilter">
+              <option value="7" data-i18n="filter_7days">Last 7 Days</option>
+              <option value="30" selected data-i18n="filter_30days">Last 30 Days</option>
+              <option value="90" data-i18n="filter_90days">Last 90 Days</option>
+            </select>
+          </div>
+          <canvas id="revenueChart" height="160"></canvas>
+        </div>
+      </div>
+
+      <!-- Recent Transactions + Alerts -->
+      <div class="dashboard-row">
+        <div class="card">
+          <div class="card-header-row">
+            <h3 data-i18n="recent_transactions">Recent Transactions</h3>
+            <button class="btn-link" data-page="ledger" data-i18n="view_all">View All</button>
+          </div>
+          <div class="transaction-list" id="dashTransactions">
+            <p class="empty-state" data-i18n="no_transactions_yet">No transactions yet. Add your first entry!</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header-row">
+            <h3 data-i18n="smart_alerts">🔔 Smart Alerts</h3>
+            <span class="alert-count-tag" id="dashAlertCount">0 alerts</span>
+          </div>
+          <div class="alerts-mini" id="dashAlerts">
+            <p class="empty-state" data-i18n="all_clear_alerts">All clear! No alerts.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: Smart Ledger -->
+    <section class="page" id="page-ledger">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" data-i18n="ledger_title">📒 Smart Ledger</h1>
+          <p class="page-subtitle" data-i18n="ledger_sub">Record and manage all your business transactions</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-voice" id="ledgerVoiceBtn">🎙️ <span data-i18n="voice_entry">Voice Entry</span></button>
+          <button class="btn btn-primary" id="addTransactionBtn" data-i18n="add_entry">+ Add Entry</button>
+        </div>
+      </div>
+
+      <!-- Add Transaction Form -->
+      <div class="card form-card" id="transactionForm" style="display:none">
+        <h3 data-i18n="new_transaction">New Transaction</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="txType" data-i18n="tx_type">Type</label>
+            <select id="txType">
+              <option value="income" data-i18n="income_sale">💰 Income / Sale</option>
+              <option value="expense" data-i18n="expense_label">💸 Expense</option>
+              <option value="transfer" data-i18n="transfer_label">🔄 Transfer</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="txAmount" data-i18n="amount_naira">Amount (₦)</label>
+            <input type="number" id="txAmount" placeholder="0.00" min="0" />
+          </div>
+          <div class="form-group">
+            <label for="txCategory" data-i18n="category">Category</label>
+            <select id="txCategory">
+              <option value="sales" data-i18n="cat_sales">Sales</option>
+              <option value="services" data-i18n="cat_services">Services</option>
+              <option value="supplies" data-i18n="cat_supplies">Supplies</option>
+              <option value="salary" data-i18n="cat_salary">Salary</option>
+              <option value="rent" data-i18n="cat_rent">Rent</option>
+              <option value="utilities" data-i18n="cat_utilities">Utilities</option>
+              <option value="transport" data-i18n="cat_transport">Transport</option>
+              <option value="marketing" data-i18n="cat_marketing">Marketing</option>
+              <option value="other" data-i18n="cat_other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="txDate" data-i18n="date">Date</label>
+            <input type="date" id="txDate" />
+          </div>
+          <div class="form-group full-width">
+            <label for="txDescription" data-i18n="description">Description</label>
+            <input type="text" id="txDescription" placeholder="What is this transaction for?" data-i18n-placeholder="description_ph" />
+          </div>
+          <div class="form-group">
+            <label for="txCustomer" data-i18n="customer_vendor">Customer / Vendor</label>
+            <input type="text" id="txCustomer" placeholder="Name (optional)" data-i18n-placeholder="customer_vendor_ph" />
+          </div>
+          <div class="form-group">
+            <label for="txPayment" data-i18n="payment_method">Payment Method</label>
+            <select id="txPayment">
+              <option value="cash" data-i18n="cash">Cash</option>
+              <option value="transfer" data-i18n="bank_transfer">Bank Transfer</option>
+              <option value="pos" data-i18n="pos">POS</option>
+              <option value="crypto" data-i18n="crypto">Crypto</option>
+              <option value="credit" data-i18n="credit">Credit</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-ghost" id="cancelTxBtn" data-i18n="cancel">Cancel</button>
+          <button class="btn btn-primary" id="saveTxBtn" data-i18n="save_transaction">Save Transaction</button>
+        </div>
+      </div>
+
+      <!-- Ledger Filters -->
+      <div class="card filter-bar">
+        <input type="text" id="ledgerSearch" placeholder="🔍 Search transactions..." data-i18n-placeholder="search_transactions_ph" class="search-input" />
+        <select id="ledgerFilterType">
+          <option value="all" data-i18n="all_types">All Types</option>
+          <option value="income" data-i18n="income_sale">Income</option>
+          <option value="expense" data-i18n="expense_label">Expense</option>
+        </select>
+        <select id="ledgerFilterPeriod">
+          <option value="all" data-i18n="all_time">All Time</option>
+          <option value="today" data-i18n="today">Today</option>
+          <option value="week" data-i18n="this_week">This Week</option>
+          <option value="month" data-i18n="this_month">This Month</option>
+        </select>
+        <button class="btn btn-ghost" id="exportLedgerBtn">📥 <span data-i18n="export_csv">Export CSV</span></button>
+      </div>
+
+      <!-- Ledger Table -->
+      <div class="card table-card">
+        <table class="data-table" id="ledgerTable">
+          <thead>
+            <tr>
+              <th data-i18n="th_date">Date</th>
+              <th data-i18n="th_description">Description</th>
+              <th data-i18n="th_category">Category</th>
+              <th data-i18n="th_type">Type</th>
+              <th data-i18n="th_payment">Payment</th>
+              <th data-i18n="th_amount">Amount</th>
+              <th data-i18n="th_actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="ledgerTableBody">
+            <tr><td colspan="7" class="empty-cell" data-i18n="no_tx_found">No transactions found.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PAGE: Profit & Loss -->
+    <section class="page" id="page-pnl">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" data-i18n="pnl_title">📈 Profit & Loss</h1>
+          <p class="page-subtitle" data-i18n="pnl_sub">Track your business profitability over time</p>
+        </div>
+        <div class="header-actions">
+          <select class="btn btn-ghost" id="pnlPeriod">
+            <option value="month" data-i18n="this_month">This Month</option>
+            <option value="quarter" data-i18n="this_quarter">This Quarter</option>
+            <option value="year" data-i18n="this_year">This Year</option>
+            <option value="custom" data-i18n="custom_range">Custom Range</option>
+          </select>
+          <button class="btn btn-primary" id="exportPnlBtn">📥 <span data-i18n="export_pdf">Export PDF</span></button>
+        </div>
+      </div>
+
+      <div class="pnl-grid">
+        <div class="card pnl-summary-card">
+          <h3 data-i18n="pnl_summary">Summary</h3>
+          <div class="pnl-row income-row">
+            <span data-i18n="total_income_label">Total Income</span>
+            <span class="pnl-amount income" id="pnlIncome">₦0.00</span>
+          </div>
+          <div class="pnl-row expense-row">
+            <span data-i18n="total_expense_label">Total Expenses</span>
+            <span class="pnl-amount expense" id="pnlExpense">₦0.00</span>
+          </div>
+          <div class="pnl-divider"></div>
+          <div class="pnl-row gross-row">
+            <span data-i18n="gross_profit">Gross Profit</span>
+            <span class="pnl-amount" id="pnlGross">₦0.00</span>
+          </div>
+          <div class="pnl-row net-row">
+            <strong data-i18n="net_profit_loss">Net Profit / Loss</strong>
+            <span class="pnl-amount net" id="pnlNet">₦0.00</span>
+          </div>
+          <div class="pnl-margin">
+            <span data-i18n="profit_margin">Profit Margin</span>
+            <div class="margin-bar">
+              <div class="margin-fill" id="pnlMarginFill" style="width:0%"></div>
+            </div>
+            <span id="pnlMarginPct">0%</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 data-i18n="income_by_category">Income by Category</h3>
+          <canvas id="incomePieChart" height="200"></canvas>
+        </div>
+
+        <div class="card">
+          <h3 data-i18n="expense_breakdown">Expense Breakdown</h3>
+          <canvas id="expensePieChart" height="200"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 data-i18n="monthly_trend">Monthly Trend</h3>
+        <canvas id="pnlTrendChart" height="140"></canvas>
+      </div>
+
+      <!-- P&L Statement Table -->
+      <div class="card table-card">
+        <h3 data-i18n="pnl_statement">P&L Statement</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th data-i18n="th_category">Category</th>
+              <th data-i18n="th_income">Income</th>
+              <th data-i18n="th_expenses">Expenses</th>
+              <th data-i18n="th_net">Net</th>
+            </tr>
+          </thead>
+          <tbody id="pnlTableBody">
+            <tr><td colspan="4" class="empty-cell" data-i18n="pnl_empty">Add transactions to see your P&L statement.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PAGE: Inventory Management -->
+    <section class="page" id="page-inventory">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" data-i18n="inventory_title">📦 Inventory Management</h1>
+          <p class="page-subtitle" data-i18n="inventory_sub">Track your stock levels and get low-stock alerts</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-voice" id="inventoryVoiceBtn">🎙️ <span data-i18n="voice_add">Voice Add</span></button>
+          <button class="btn btn-primary" id="addInventoryBtn" data-i18n="add_product">+ Add Product</button>
+        </div>
+      </div>
+
+      <!-- Add Product Form -->
+      <div class="card form-card" id="inventoryForm" style="display:none">
+        <h3 data-i18n="add_edit_product">Add / Edit Product</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="invName" data-i18n="product_name">Product Name</label>
+            <input type="text" id="invName" placeholder="e.g. Rice (50kg bag)" data-i18n-placeholder="product_name_ph" />
+          </div>
+          <div class="form-group">
+            <label for="invSKU" data-i18n="sku_code">SKU / Code</label>
+            <input type="text" id="invSKU" placeholder="e.g. RICE-50KG" data-i18n-placeholder="sku_code_ph" />
+          </div>
+          <div class="form-group">
+            <label for="invCategory" data-i18n="category">Category</label>
+            <input type="text" id="invCategory" placeholder="e.g. Food, Electronics" />
+          </div>
+          <div class="form-group">
+            <label for="invQty" data-i18n="quantity">Quantity</label>
+            <input type="number" id="invQty" placeholder="0" min="0" />
+          </div>
+          <div class="form-group">
+            <label for="invCostPrice" data-i18n="cost_price">Cost Price (₦)</label>
+            <input type="number" id="invCostPrice" placeholder="0.00" min="0" />
+          </div>
+          <div class="form-group">
+            <label for="invSellingPrice" data-i18n="selling_price">Selling Price (₦)</label>
+            <input type="number" id="invSellingPrice" placeholder="0.00" min="0" />
+          </div>
+          <div class="form-group">
+            <label for="invLowAlert" data-i18n="low_stock_alert_qty">Low Stock Alert (qty)</label>
+            <input type="number" id="invLowAlert" placeholder="5" min="0" />
+          </div>
+          <div class="form-group">
+            <label for="invUnit" data-i18n="unit">Unit</label>
+            <select id="invUnit">
+              <option data-i18n="unit_pieces">Pieces</option>
+              <option data-i18n="unit_bags">Bags</option>
+              <option data-i18n="unit_litres">Litres</option>
+              <option data-i18n="unit_kg">Kg</option>
+              <option data-i18n="unit_cartons">Cartons</option>
+              <option data-i18n="unit_dozen">Dozen</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-ghost" id="cancelInvBtn" data-i18n="cancel">Cancel</button>
+          <button class="btn btn-primary" id="saveInvBtn" data-i18n="save_product">Save Product</button>
+        </div>
+      </div>
+
+      <!-- Inventory Stats -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon">📦</div>
+          <div class="kpi-info">
+            <span class="kpi-label" data-i18n="total_products">Total Products</span>
+            <span class="kpi-value" id="invTotalProducts">0</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">💎</div>
+          <div class="kpi-info">
+            <span class="kpi-label" data-i18n="stock_value">Stock Value</span>
+            <span class="kpi-value" id="invStockValue">₦0</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">⚠️</div>
+          <div class="kpi-info">
+            <span class="kpi-label" data-i18n="low_stock_items">Low Stock Items</span>
+            <span class="kpi-value" id="invLowStockCount">0</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">🏆</div>
+          <div class="kpi-info">
+            <span class="kpi-label" data-i18n="potential_revenue">Potential Revenue</span>
+            <span class="kpi-value" id="invPotentialRevenue">₦0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card filter-bar">
+        <input type="text" id="invSearch" placeholder="🔍 Search products..." data-i18n-placeholder="search_products_ph" class="search-input" />
+        <select id="invFilterCategory">
+          <option value="all" data-i18n="all_categories">All Categories</option>
+        </select>
+        <select id="invFilterStatus">
+          <option value="all" data-i18n="all_status">All Status</option>
+          <option value="ok" data-i18n="in_stock">In Stock</option>
+          <option value="low" data-i18n="low_stock">Low Stock</option>
+          <option value="out" data-i18n="out_of_stock">Out of Stock</option>
+        </select>
+      </div>
+
+      <div class="card table-card">
+        <table class="data-table" id="inventoryTable">
+          <thead>
+            <tr>
+              <th data-i18n="th_product">Product</th>
+              <th data-i18n="th_sku">SKU</th>
+              <th data-i18n="th_category">Category</th>
+              <th data-i18n="th_qty">Qty</th>
+              <th data-i18n="th_cost_price">Cost Price</th>
+              <th data-i18n="th_selling_price">Selling Price</th>
+              <th data-i18n="th_profit_unit">Profit/Unit</th>
+              <th data-i18n="th_status">Status</th>
+              <th data-i18n="th_actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryTableBody">
+            <tr><td colspan="9" class="empty-cell" data-i18n="no_products_added">No products added yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PAGE: Debt Manager -->
+    <section class="page" id="page-debts">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" data-i18n="debt_title">💳 Debt Manager</h1>
+          <p class="page-subtitle" data-i18n="debt_sub">Track money owed to you and money you owe</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-primary" id="addDebtBtn" data-i18n="add_debt_record">+ Add Debt Record</button>
+        </div>
+      </div>
+
+      <div class="debt-tabs">
+        <button class="debt-tab active" data-tab="owed-to-me" id="tab-owedToMe" data-i18n="tab_owed_to_me">💰 Owed To Me</button>
+        <button class="debt-tab" data-tab="i-owe" id="tab-iOwe" data-i18n="tab_i_owe">💸 I Owe</button>
+      </div>
+
+      <!-- Add Debt Form -->
+      <div class="card form-card" id="debtForm" style="display:none">
+        <h3 data-i18n="new_debt_record">New Debt Record</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="debtType" data-i18n="debt_type">Debt Type</label>
+            <select id="debtType">
+              <option value="receivable" data-i18n="customer_owes_me">💰 Customer Owes Me</option>
+              <option value="payable" data-i18n="i_owe_someone">💸 I Owe Someone</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="debtPerson" data-i18n="person_name">Name</label>
+            <input type="text" id="debtPerson" placeholder="Customer / Vendor name" data-i18n-placeholder="person_name_ph" />
+          </div>
+          <div class="form-group">
+            <label for="debtPhone" data-i18n="phone_number">Phone Number</label>
+            <input type="tel" id="debtPhone" placeholder="+234..." />
+          </div>
+          <div class="form-group">
+            <label for="debtAmount" data-i18n="amount_incurred">Amount (₦)</label>
+            <input type="number" id="debtAmount" placeholder="0.00" min="0" />
+          </div>
+          <div class="form-group">
+            <label for="debtDate" data-i18n="date_incurred">Date Incurred</label>
+            <input type="date" id="debtDate" />
+          </div>
+          <div class="form-group">
+            <label for="debtDue" data-i18n="due_date">Due Date</label>
+            <input type="date" id="debtDue" />
+          </div>
+          <div class="form-group full-width">
+            <label for="debtDescription" data-i18n="description">Description</label>
+            <input type="text" id="debtDescription" placeholder="What is this debt for?" data-i18n-placeholder="debt_desc_ph" />
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn btn-ghost" id="cancelDebtBtn" data-i18n="cancel">Cancel</button>
+          <button class="btn btn-primary" id="saveDebtBtn" data-i18n="save_debt">Save Debt</button>
+        </div>
+      </div>
+
+      <!-- Debt KPIs -->
+      <div class="kpi-grid">
+        <div class="kpi-card revenue">
+          <div class="kpi-icon">💰</div>
+          <div class="kpi-info">
+            <span class="kpi-label" data-i18n="total_receivable">Total Receivable</span>
+            <span class="kpi-value" id="totalReceivable">₦0</span>
+          </div>
+        </div>
+        <div class="kpi-card expenses">
+          <div class="kpi-icon">💸</div>
+          <div class="kpi-info">
+            <span class="kpi-label" data-i18n="total_payable">Total Payable</span>
+            <span class="kpi-value" id="totalPayable">₦0</span>
+          </div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-icon">⏰</div>
+          <div class="kpi-info">
+            <span class="kpi-label" data-i18n="overdue_debts">Overdue Debts</span>
+            <span class="kpi-value" id="overdueDebts">0</span>
+          </div>
+        </div>
+        <div class="kpi-card profit">
+          <div class="kpi-icon">📊</div>
+          <div class="kpi-info">
+            <span class="kpi-label" data-i18n="net_position">Net Position</span>
+            <span class="kpi-value" id="netDebtPosition">₦0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card table-card">
+        <table class="data-table" id="debtsTable">
+          <thead>
+            <tr>
+              <th data-i18n="th_name">Name</th>
+              <th data-i18n="th_phone">Phone</th>
+              <th data-i18n="th_amount">Amount</th>
+              <th data-i18n="th_date">Date</th>
+              <th data-i18n="th_due_date">Due Date</th>
+              <th data-i18n="th_status">Status</th>
+              <th data-i18n="th_actions">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="debtsTableBody">
+            <tr><td colspan="7" class="empty-cell" data-i18n="no_debt_records">No debt records yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- PAGE: Invoice Generator -->
+    <section class="page" id="page-invoice">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" data-i18n="invoice_title">🧾 Invoice Generator</h1>
+          <p class="page-subtitle" data-i18n="invoice_sub">Create professional invoices in seconds</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-ghost" id="invoiceHistoryBtn" data-i18n="invoice_history">📋 History</button>
+          <button class="btn btn-primary" id="newInvoiceBtn" data-i18n="new_invoice">+ New Invoice</button>
+        </div>
+      </div>
+
+      <div class="invoice-workspace">
+        <!-- Invoice Form -->
+        <div class="card invoice-form-card">
+          <h3 data-i18n="invoice_details">Invoice Details</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="invNo" data-i18n="invoice_number">Invoice Number</label>
+              <input type="text" id="invNo" readonly />
+            </div>
+            <div class="form-group">
+              <label for="invIssueDate" data-i18n="issue_date">Issue Date</label>
+              <input type="date" id="invIssueDate" />
+            </div>
+            <div class="form-group">
+              <label for="invDueDate" data-i18n="due_date">Due Date</label>
+              <input type="date" id="invDueDate" />
+            </div>
+            <div class="form-group">
+              <label for="invStatus" data-i18n="th_status">Status</label>
+              <select id="invStatus">
+                <option value="draft" data-i18n="status_draft">Draft</option>
+                <option value="sent" data-i18n="status_sent">Sent</option>
+                <option value="paid" data-i18n="status_paid">Paid</option>
+                <option value="overdue" data-i18n="status_overdue">Overdue</option>
+              </select>
+            </div>
+          </div>
+
+          <h4 data-i18n="bill_to">Bill To</h4>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="clientName" data-i18n="client_name">Client Name</label>
+              <input type="text" id="clientName" placeholder="Customer / Business Name" data-i18n-placeholder="client_name_ph" />
+            </div>
+            <div class="form-group">
+              <label for="clientPhone" data-i18n="client_phone">Phone</label>
+              <input type="tel" id="clientPhone" placeholder="+234..." />
+            </div>
+            <div class="form-group full-width">
+              <label for="clientAddress" data-i18n="client_address">Address</label>
+              <input type="text" id="clientAddress" placeholder="Client address" />
+            </div>
+          </div>
+
+          <h4 data-i18n="line_items">Line Items</h4>
+          <div id="lineItems">
+            <div class="line-item" data-id="1">
+              <input type="text" placeholder="Description" data-i18n-placeholder="description" class="li-desc" />
+              <input type="number" placeholder="Qty" data-i18n-placeholder="th_qty" class="li-qty" min="1" value="1" />
+              <input type="number" placeholder="Unit Price ₦" class="li-price" min="0" />
+              <span class="li-total">₦0.00</span>
+              <button class="li-remove">✕</button>
+            </div>
+          </div>
+          <button class="btn btn-ghost" id="addLineItem" data-i18n="add_item">+ Add Item</button>
+
+          <div class="invoice-totals">
+            <div class="inv-total-row"><span data-i18n="subtotal">Subtotal</span><span id="invSubtotal">₦0.00</span></div>
+            <div class="inv-total-row">
+              <span data-i18n="tax_pct">Tax (%)</span>
+              <input type="number" id="invTax" value="0" min="0" max="100" style="width:60px;" />
+            </div>
+            <div class="inv-total-row">
+              <span data-i18n="discount_pct">Discount (%)</span>
+              <input type="number" id="invDiscount" value="0" min="0" max="100" style="width:60px;" />
+            </div>
+            <div class="inv-total-row total-final">
+              <strong data-i18n="grand_total">Total</strong><strong id="invTotal">₦0.00</strong>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="invNotes" data-i18n="notes_terms">Notes</label>
+            <textarea id="invNotes" placeholder="Payment terms, bank details, thank you message..." data-i18n-placeholder="notes_terms_ph" rows="3"></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-ghost" id="saveInvoiceDraftBtn" data-i18n="save_draft">Save Draft</button>
+            <button class="btn btn-secondary" id="previewInvoiceBtn">👁️ <span data-i18n="preview">Preview</span></button>
+            <button class="btn btn-primary" id="downloadInvoiceBtn">📥 <span data-i18n="download_pdf">Download PDF</span></button>
+          </div>
+        </div>
+
+        <!-- Invoice Preview -->
+        <div class="card invoice-preview-card" id="invoicePreview">
+          <div class="inv-preview" id="invPreviewContent">
+            <div class="inv-header-preview">
+              <div class="inv-brand">
+                <div class="inv-logo" style="padding:4px;overflow:hidden">
+                  <img src="logo.png" alt="TT" style="width:100%;height:100%;object-fit:contain;border-radius:6px;" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
+                  <span style="display:none">TT</span>
+                </div>
+                <div>
+                  <h2 id="prevBusinessName">Your Business Name</h2>
+                  <p id="prevBusinessAddr">Business Address</p>
+                </div>
+              </div>
+              <div class="inv-meta">
+                <h1 data-i18n="nav_invoice">INVOICE</h1>
+                <p>#<span id="prevInvNo">001</span></p>
+                <p><span data-i18n="date">Date</span>: <span id="prevDate"></span></p>
+                <p><span data-i18n="due_date">Due</span>: <span id="prevDue"></span></p>
+              </div>
+            </div>
+            <div class="inv-bill-to">
+              <strong data-i18n="bill_to">Bill To:</strong>
+              <p id="prevClientName">Client Name</p>
+              <p id="prevClientAddr">Client Address</p>
+            </div>
+            <table class="inv-items-table">
+              <thead><tr><th data-i18n="th_description">Description</th><th data-i18n="th_qty">Qty</th><th data-i18n="th_selling_price">Price</th><th data-i18n="grand_total">Total</th></tr></thead>
+              <tbody id="prevLineItems"></tbody>
+            </table>
+            <div class="inv-totals-preview">
+              <div><span data-i18n="subtotal">Subtotal:</span><span id="prevSubtotal">₦0.00</span></div>
+              <div><span data-i18n="grand_total">Total:</span><strong id="prevTotal">₦0.00</strong></div>
+            </div>
+            <p class="inv-notes" id="prevNotes"></p>
+            <p class="inv-footer" data-i18n="inv_footer">Generated by Voice Ledger AI · TuyiTek Digital Solutions</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: Ask Your Business -->
+    <section class="page" id="page-ask">
+      <div class="page-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
+        <div>
+          <h1 class="page-title" data-i18n="ask_title">🤖 Ask Your Business</h1>
+          <p class="page-subtitle" data-i18n="ask_sub">Chat with your AI business assistant in any Nigerian language</p>
+        </div>
+        <div class="gemini-pill-badge" id="geminiBadge" onclick="AIAssistant.openGeminiSettings()" title="Gemini AI Connected — Click to configure">
+          <span class="gemini-pulse-dot" id="geminiPulseDot"></span>
+          <span id="geminiBadgeText" data-i18n="gemini_status_connected">⚡ Gemini AI Active</span>
+          <span style="font-size:11px; opacity:0.8; margin-left:2px;">⚙️</span>
+        </div>
+      </div>
+
+      <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-msg ai-msg">
+            <div class="msg-avatar">🤖</div>
+            <div class="msg-bubble">
+              <p data-i18n="ai_intro_hello">Hello! I am your TuyiTek Digital Solutions AI Business Assistant. 👋</p>
+              <p data-i18n="ai_intro_desc">You can ask me anything about your business — in English, Yoruba, Igbo, Pidgin, or Hausa!</p>
+              <p data-i18n="ai_intro_sample">Try asking: <em>"How much profit this month?"</em> or <em>"Who owes me money?"</em> or <em>"Record sale of ₦15,000 for rice"</em>.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="suggested-questions" id="suggestedQuestions">
+          <button class="suggest-btn" data-q="What is my total revenue this month?" data-i18n="suggest_rev_month">Total revenue this month?</button>
+          <button class="suggest-btn" data-q="Which product sells the most?" data-i18n="suggest_best_product">Best-selling product?</button>
+          <button class="suggest-btn" data-q="Who owes me money?" data-i18n="suggest_who_owes">Who owes me money?</button>
+          <button class="suggest-btn" data-q="What is my profit today?" data-i18n="suggest_today_profit">Wetin be my profit?</button>
+          <button class="suggest-btn" data-q="Show me low stock items" data-i18n="suggest_low_stock">Low stock alert?</button>
+          <button class="suggest-btn" data-q="How can I grow my business?" data-i18n="suggest_growth_tips">Business growth tips?</button>
+        </div>
+
+        <div class="chat-input-row">
+          <button class="chat-voice-btn" id="chatVoiceBtn" title="Voice input" data-i18n-title="tap_to_speak">🎙️</button>
+          <input type="text" id="chatInput" placeholder="Ask your business anything... (English, Yoruba, Igbo, Pidgin...)" data-i18n-placeholder="chat_input_placeholder" />
+          <button class="chat-send-btn" id="chatSendBtn" data-i18n="chat_send_btn">Send ➤</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: Daily Summary -->
+    <section class="page" id="page-summary">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" data-i18n="summary_title">📅 Daily Business Summary</h1>
+          <p class="page-subtitle" data-i18n="summary_sub">Your AI-generated business report for today</p>
+        </div>
+        <div class="header-actions">
+          <input type="date" id="summaryDate" class="btn btn-ghost" />
+          <button class="btn btn-primary" id="shareSummaryBtn" data-i18n="share_summary">📤 Share Summary</button>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <div class="card summary-main">
+          <div class="summary-ai-badge" data-i18n="ai_generated_badge">🤖 AI Generated</div>
+          <h3 id="summaryHeading" data-i18n="todays_summary_heading">Today's Business Summary</h3>
+          <div class="summary-content" id="summaryContent">
+            <p class="empty-state" data-i18n="summary_empty">Add transactions to generate your daily summary.</p>
+          </div>
+        </div>
+
+        <div class="summary-sidebar">
+          <div class="card">
+            <h3 data-i18n="todays_numbers">Today's Numbers</h3>
+            <div class="today-stats">
+              <div class="today-stat"><span data-i18n="cat_sales">Sales</span><span id="todaySales">₦0</span></div>
+              <div class="today-stat"><span data-i18n="total_expenses">Expenses</span><span id="todayExpenses">₦0</span></div>
+              <div class="today-stat"><span data-i18n="th_net">Net</span><span id="todayNet">₦0</span></div>
+              <div class="today-stat"><span data-i18n="activity_metric">Transactions</span><span id="todayTxCount">0</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3 data-i18n="top_performers_today">Top Performers Today</h3>
+            <div id="topPerformers">
+              <p class="empty-state" data-i18n="no_tx_found">No data yet</p>
+            </div>
+          </div>
+          <div class="card">
+            <h3 data-i18n="ai_recommendations">AI Recommendations</h3>
+            <div id="aiRecommendations">
+              <p class="empty-state" data-i18n="health_empty_desc">Add more data to get personalized recommendations.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: Business Health Score -->
+    <section class="page" id="page-health">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" data-i18n="health_title">💚 Business Health Score</h1>
+          <p class="page-subtitle" data-i18n="health_sub">AI-powered analysis of your business vitality</p>
+        </div>
+      </div>
+
+      <div class="health-layout">
+        <div class="card health-main-card">
+          <div class="health-gauge-large">
+            <svg viewBox="0 0 300 200" class="gauge-svg-large">
+              <defs>
+                <linearGradient id="gaugeGradLarge" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" style="stop-color:#ef4444"/>
+                  <stop offset="40%" style="stop-color:#f59e0b"/>
+                  <stop offset="75%" style="stop-color:#22c55e"/>
+                  <stop offset="100%" style="stop-color:#06b6d4"/>
+                </linearGradient>
+              </defs>
+              <path d="M 30 160 A 120 120 0 0 1 270 160" stroke="#1e293b" stroke-width="24" fill="none"/>
+              <path id="gaugeFillLarge" d="M 30 160 A 120 120 0 0 1 270 160" stroke="url(#gaugeGradLarge)" stroke-width="24" fill="none" stroke-dasharray="0 377" stroke-linecap="round"/>
+              <text x="150" y="155" text-anchor="middle" class="gauge-score-large" id="gaugeScoreLarge">0</text>
+              <text x="150" y="180" text-anchor="middle" class="gauge-label-text" id="gaugeStatusLarge">--</text>
+            </svg>
+          </div>
+          <div class="health-verdict" id="healthVerdict">
+            <h3 data-i18n="analyzing_biz">Analyzing your business...</h3>
+            <p data-i18n="health_empty_desc">Add transactions and inventory data to get your health score.</p>
+          </div>
+        </div>
+
+        <div class="health-metrics">
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span class="metric-label" data-i18n="rev_growth">💰 Revenue Growth</span>
+              <span class="metric-score" id="metricRevenue">--</span>
+            </div>
+            <div class="metric-bar"><div class="metric-fill" id="metricRevenueFill" style="width:0%"></div></div>
+          </div>
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span class="metric-label" data-i18n="profit_margin_metric">📈 Profit Margin</span>
+              <span class="metric-score" id="metricMargin">--</span>
+            </div>
+            <div class="metric-bar"><div class="metric-fill" id="metricMarginFill" style="width:0%"></div></div>
+          </div>
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span class="metric-label" data-i18n="inv_health_metric">📦 Inventory Health</span>
+              <span class="metric-score" id="metricInventory">--</span>
+            </div>
+            <div class="metric-bar"><div class="metric-fill" id="metricInventoryFill" style="width:0%"></div></div>
+          </div>
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span class="metric-label" data-i18n="debt_ratio_metric">💳 Debt Ratio</span>
+              <span class="metric-score" id="metricDebt">--</span>
+            </div>
+            <div class="metric-bar"><div class="metric-fill danger" id="metricDebtFill" style="width:0%"></div></div>
+          </div>
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span class="metric-label" data-i18n="activity_metric">🔄 Transaction Activity</span>
+              <span class="metric-score" id="metricActivity">--</span>
+            </div>
+            <div class="metric-bar"><div class="metric-fill" id="metricActivityFill" style="width:0%"></div></div>
+          </div>
+          <div class="card metric-card">
+            <div class="metric-header">
+              <span class="metric-label" data-i18n="cashflow_metric">💧 Cash Flow</span>
+              <span class="metric-score" id="metricCashflow">--</span>
+            </div>
+            <div class="metric-bar"><div class="metric-fill" id="metricCashflowFill" style="width:0%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 data-i18n="health_recs_title">🤖 AI Health Recommendations</h3>
+        <div id="healthRecommendations">
+          <p class="empty-state" data-i18n="health_empty_desc">Your personalized recommendations will appear here as you add more data.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: Smart Alerts -->
+    <section class="page" id="page-alerts">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" data-i18n="alerts_title">🔔 Smart Alerts</h1>
+          <p class="page-subtitle" data-i18n="alerts_sub">AI-powered notifications for your business</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-ghost" id="markAllReadBtn" data-i18n="mark_all_read">Mark All Read</button>
+          <button class="btn btn-primary" id="refreshAlertsBtn" data-i18n="refresh_alerts">🔄 Refresh</button>
+        </div>
+      </div>
+
+      <div class="alerts-filter-bar">
+        <button class="alert-filter-btn active" data-filter="all" data-i18n="filter_all">All</button>
+        <button class="alert-filter-btn" data-filter="critical" data-i18n="filter_critical">🔴 Critical</button>
+        <button class="alert-filter-btn" data-filter="warning" data-i18n="filter_warning">🟡 Warning</button>
+        <button class="alert-filter-btn" data-filter="info" data-i18n="filter_info">🔵 Info</button>
+        <button class="alert-filter-btn" data-filter="success" data-i18n="filter_success">🟢 Success</button>
+      </div>
+
+      <div class="alerts-container" id="alertsContainer">
+        <div class="alert-item info unread">
+          <div class="alert-icon">🤖</div>
+          <div class="alert-body">
+            <p class="alert-title">Welcome to Voice Ledger AI!</p>
+            <p class="alert-desc">Start adding transactions to receive smart alerts about your business.</p>
+            <span class="alert-time">Just now</span>
+          </div>
+          <span class="alert-type-badge info">Info</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE: Financial Reports -->
+    <section class="page" id="page-reports">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title" data-i18n="reports_title">📋 Financial Reports</h1>
+          <p class="page-subtitle" data-i18n="reports_sub">Comprehensive financial analysis and reporting</p>
+        </div>
+        <div class="header-actions">
+          <select class="btn btn-ghost" id="reportPeriod">
+            <option value="month" data-i18n="this_month">This Month</option>
+            <option value="quarter" data-i18n="this_quarter">This Quarter</option>
+            <option value="year" data-i18n="this_year">This Year</option>
+          </select>
+          <button class="btn btn-primary" id="generateReportBtn" data-i18n="generate_report">📊 Generate Report</button>
+        </div>
+      </div>
+
+      <div class="reports-grid">
+        <div class="card report-type-card" data-report="pnl">
+          <div class="report-icon">📈</div>
+          <h3 data-i18n="card_pnl_title">Profit & Loss Statement</h3>
+          <p data-i18n="card_pnl_desc">Complete income vs expense analysis</p>
+          <button class="btn btn-primary" data-i18n="generate_btn">Generate</button>
+        </div>
+        <div class="card report-type-card" data-report="cashflow">
+          <div class="report-icon">💧</div>
+          <h3 data-i18n="card_cashflow_title">Cash Flow Report</h3>
+          <p data-i18n="card_cashflow_desc">Track money flowing in and out</p>
+          <button class="btn btn-primary" data-i18n="generate_btn">Generate</button>
+        </div>
+        <div class="card report-type-card" data-report="inventory">
+          <div class="report-icon">📦</div>
+          <h3 data-i18n="card_inventory_title">Inventory Report</h3>
+          <p data-i18n="card_inventory_desc">Stock levels and valuation</p>
+          <button class="btn btn-primary" data-i18n="generate_btn">Generate</button>
+        </div>
+        <div class="card report-type-card" data-report="debt">
+          <div class="report-icon">💳</div>
+          <h3 data-i18n="card_debt_title">Debt & Receivables Report</h3>
+          <p data-i18n="card_debt_desc">Outstanding debts analysis</p>
+          <button class="btn btn-primary" data-i18n="generate_btn">Generate</button>
+        </div>
+        <div class="card report-type-card" data-report="tax">
+          <div class="report-icon">🏛️</div>
+          <h3 data-i18n="card_tax_title">Tax Summary</h3>
+          <p data-i18n="card_tax_desc">VAT and income tax preparation</p>
+          <button class="btn btn-primary" data-i18n="generate_btn">Generate</button>
+        </div>
+        <div class="card report-type-card" data-report="sales">
+          <div class="report-icon">🛒</div>
+          <h3 data-i18n="card_sales_title">Sales Analysis</h3>
+          <p data-i18n="card_sales_desc">Product and customer insights</p>
+          <button class="btn btn-primary" data-i18n="generate_btn">Generate</button>
+        </div>
+      </div>
+
+      <div class="card" id="reportOutput" style="display:none">
+        <div class="card-header-row">
+          <h3 id="reportTitle" data-i18n="reports_title">Report</h3>
+          <div>
+            <button class="btn btn-ghost" id="exportReportCSV">📥 CSV</button>
+            <button class="btn btn-ghost" id="exportReportPDF">📥 PDF</button>
+          </div>
+        </div>
+        <div id="reportContent"></div>
+      </div>
+
+      <!-- Big Chart -->
+      <div class="card">
+        <div class="card-header-row">
+          <h3 data-i18n="financial_overview">Financial Overview</h3>
+        </div>
+        <canvas id="reportsChart" height="200"></canvas>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast Notifications -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Gemini AI Settings Modal -->
+  <div class="modal-overlay hidden" id="geminiModal">
+    <div class="modal" style="max-width: 480px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:24px;">⚡</span>
+          <div>
+            <h3 style="margin:0; font-size:18px;" data-i18n="gemini_config_title">Gemini AI Configuration</h3>
+            <p style="margin:0; font-size:12px; color:var(--text-muted);" data-i18n="gemini_config_sub">Google Generative AI for Voice Ledger</p>
+          </div>
+        </div>
+        <button class="btn btn-ghost" onclick="AIAssistant.closeGeminiSettings()" style="font-size:18px; padding:4px 8px;">✕</button>
+      </div>
+
+      <div class="form-group" style="margin-bottom:14px;">
+        <label for="geminiApiKeyInput" style="display:block; margin-bottom:6px; font-weight:600; font-size:13px;" data-i18n="gemini_key_label">Google Gemini API Key</label>
+        <div style="position:relative;">
+          <input type="password" id="geminiApiKeyInput" style="width:100%; padding-right:40px; font-family:monospace; font-size:12px;" placeholder="AQ...." />
+          <button type="button" class="btn btn-ghost" onclick="AIAssistant.toggleKeyVisibility()" style="position:absolute; right:6px; top:50%; transform:translateY(-50%); padding:2px 8px; font-size:12px;" title="Show/Hide">👁️</button>
+        </div>
+        <small style="color:var(--text-muted); font-size:11px; display:block; margin-top:4px;" data-i18n="gemini_key_help">Stored securely in your browser and connects directly to Google AI.</small>
+      </div>
+
+      <div class="form-group" style="margin-bottom:16px;">
+        <label style="display:block; margin-bottom:6px; font-weight:600; font-size:13px;" data-i18n="gemini_active_model_label">Active Model</label>
+        <div style="padding:10px 14px; background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; font-family:monospace; font-size:12px; color:#8ab4f8; display:flex; justify-content:space-between; align-items:center;">
+          <span>gemini-3-flash-preview (Ultra-Fast)</span>
+          <span style="color:#10b981; font-weight:bold;">● Ready</span>
+        </div>
+      </div>
+
+      <div id="geminiTestResult" style="margin-bottom:14px; display:none; padding:10px; border-radius:8px; font-size:12px;"></div>
+
+      <div style="display:flex; gap:10px;">
+        <button class="btn btn-secondary" style="flex:1;" id="geminiTestBtn" onclick="AIAssistant.testGeminiConnection()" data-i18n="gemini_test_btn">Test Connection</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="AIAssistant.saveGeminiSettings()" data-i18n="save_changes">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Business Setup Modal (First Time) -->
+  <div class="modal-overlay" id="setupModal">
+    <div class="modal setup-modal">
+      <div class="modal-logo">
+        <img src="logo.png" alt="TuyiTek" style="width:80px;height:80px;object-fit:contain;border-radius:16px;margin:0 auto 16px;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
+        <div class="tuyitek-logo-lg" style="display:none">TT</div>
+        <h2 data-i18n="welcome_voice_ledger">Welcome to Voice Ledger AI</h2>
+        <p data-i18n="by_tuyitek">by TuyiTek Digital Solutions</p>
+      </div>
+      <h3 data-i18n="setup_heading">Let's set up your business</h3>
+      <div class="form-group">
+        <label for="setupBusinessName" data-i18n="setup_business_name_label">Business Name</label>
+        <input type="text" id="setupBusinessName" placeholder="e.g. Mama Ngozi's Store" data-i18n-placeholder="setup_business_name_ph" />
+      </div>
+      <div class="form-group">
+        <label for="setupBusinessType" data-i18n="setup_business_type_label">Business Type</label>
+        <select id="setupBusinessType">
+          <option value="retail">Retail Store</option>
+          <option value="food">Food & Restaurant</option>
+          <option value="services">Services</option>
+          <option value="wholesale">Wholesale / Distribution</option>
+          <option value="manufacturing">Manufacturing</option>
+          <option value="tech">Tech / Digital</option>
+          <option value="fashion">Fashion & Clothing</option>
+          <option value="pharmacy">Pharmacy / Medical</option>
+          <option value="agric">Agriculture</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="setupPhone" data-i18n="setup_phone_label">Business Phone</label>
+        <input type="tel" id="setupPhone" placeholder="+234..." />
+      </div>
+      <div class="form-group">
+        <label for="setupLanguage" data-i18n="setup_language_label">Preferred Language</label>
+        <select id="setupLanguage">
+          <option value="en">English (US/UK)</option>
+          <option value="yo">Yorùbá (Pure)</option>
+          <option value="pcm">Naija (Pidgin)</option>
+          <option value="ig">Asụsụ Igbo</option>
+          <option value="ha">Harshen Hausa</option>
+          <option value="edo">Ẹ̀dó (Benin)</option>
+        </select>
+      </div>
+      <button class="btn btn-primary btn-full" id="setupCompleteBtn" data-i18n="get_started_btn">Get Started 🚀</button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/ledger.js"></script>
+  <script src="js/inventory.js"></script>
+  <script src="js/debts.js"></script>
+  <script src="js/invoice.js"></script>
+  <script src="js/ai-assistant.js"></script>
+  <script src="js/health.js"></script>
+  <script src="js/alerts.js"></script>
+  <script src="js/reports.js"></script>
+  <script src="js/voice.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration error:', err));
+      });
+    }
+  </script>
+</body>
+</html>
