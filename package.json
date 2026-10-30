@@ -1,0 +1,23 @@
+{
+  "name": "voice-ledger-ai",
+  "version": "1.0.0",
+  "description": "Voice Ledger AI - Multilingual Smart Business Accounting & Advisory PWA powered by Gemini AI by TuyiTek Digital Solutions",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "voice-ledger",
+    "accounting",
+    "pwa",
+    "gemini-ai",
+    "nigeria",
+    "yoruba",
+    "tuyitek"
+  ],
+  "author": "TuyiTek Digital Solutions",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
