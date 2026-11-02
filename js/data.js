@@ -13,7 +13,9 @@ const DB = {
     INVOICES: 'vla_invoices',
     ALERTS: 'vla_alerts',
     SETTINGS: 'vla_settings',
-    SETUP_DONE: 'vla_setup_done'
+    SETUP_DONE: 'vla_setup_done',
+    USER: 'vla_user',
+    SESSION: 'vla_session'
   },
 
   // Generic get/set
@@ -26,10 +28,37 @@ const DB = {
     catch { return false; }
   },
 
-  // Business
-  getBusiness()     { return this.get(this.KEYS.BUSINESS) || { name: 'My Business', type: 'retail', phone: '', language: 'en' }; },
+  // User & Session (Sign In / Sign Out)
+  getUser() {
+    return this.get(this.KEYS.USER) || null;
+  },
+  setUser(user) {
+    return this.set(this.KEYS.USER, user);
+  },
+  getSession() {
+    return this.get(this.KEYS.SESSION) || null;
+  },
+  setSession(session) {
+    return this.set(this.KEYS.SESSION, session);
+  },
+  isLoggedIn() {
+    const hasSession = !!this.getSession();
+    const hasBusiness = this.isSetupDone() && !!this.getBusiness()?.name;
+    return hasSession || hasBusiness;
+  },
+  logout() {
+    localStorage.removeItem(this.KEYS.SESSION);
+    localStorage.removeItem(this.KEYS.SETUP_DONE);
+    return true;
+  },
+
+  // Business Profile
+  getBusiness() {
+    return this.get(this.KEYS.BUSINESS) || { name: '', type: 'retail', phone: '', language: 'en' };
+  },
   setBusiness(data) {
-    const res = this.set(this.KEYS.BUSINESS, data);
+    const prev = this.get(this.KEYS.BUSINESS) || {};
+    const res = this.set(this.KEYS.BUSINESS, { ...prev, ...data });
     this.triggerSync();
     return res;
   },
@@ -269,45 +298,33 @@ const DB = {
   // Generate unique ID
   genId() {
     return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+  },
+
+  // Clear all data to brand new state
+  clearAllData() {
+    this.set(this.KEYS.TRANSACTIONS, []);
+    this.set(this.KEYS.INVENTORY, []);
+    this.set(this.KEYS.DEBTS, []);
+    this.set(this.KEYS.INVOICES, []);
+    this.set(this.KEYS.ALERTS, []);
+    this.triggerSync();
+  },
+
+  // Purge legacy demo data to ensure a 100% brand new clean ledger
+  purgeDemoData() {
+    if (localStorage.getItem('vla_clean_v2') !== 'true') {
+      this.set(this.KEYS.TRANSACTIONS, []);
+      this.set(this.KEYS.INVENTORY, []);
+      this.set(this.KEYS.DEBTS, []);
+      this.set(this.KEYS.INVOICES, []);
+      this.set(this.KEYS.ALERTS, []);
+      localStorage.setItem('vla_clean_v2', 'true');
+    }
   }
 };
 
-// ── SEED DEMO DATA (first time) ──
+// ── BRAND NEW INITIALIZATION (NO FAKE DEMO DATA) ──
 function seedDemoData() {
-  if (DB.isSetupDone()) return;
-
-  // Only seed if no transactions
-  if (DB.getTransactions().length > 0) return;
-
-  const today = new Date();
-  const fmt = (d) => d.toISOString().split('T')[0];
-
-  const demoTxs = [
-    { id: DB.genId(), type: 'income',  amount: 45000,  category: 'sales',    description: 'Sold rice bags to customer',   customer: 'Mama Chioma',  payment: 'cash',     date: fmt(new Date(today - 1*86400000)) },
-    { id: DB.genId(), type: 'income',  amount: 28500,  category: 'services', description: 'Delivery service fee',         customer: 'Alhaji Musa',  payment: 'transfer', date: fmt(new Date(today - 2*86400000)) },
-    { id: DB.genId(), type: 'expense', amount: 12000,  category: 'supplies', description: 'Restock supplies from market', customer: 'Vendor',       payment: 'cash',     date: fmt(new Date(today - 2*86400000)) },
-    { id: DB.genId(), type: 'income',  amount: 67000,  category: 'sales',    description: 'Wholesale order payment',      customer: 'Bello Stores', payment: 'transfer', date: fmt(new Date(today - 3*86400000)) },
-    { id: DB.genId(), type: 'expense', amount: 8500,   category: 'transport',description: 'Delivery truck fuel',          customer: '',             payment: 'cash',     date: fmt(new Date(today - 3*86400000)) },
-    { id: DB.genId(), type: 'expense', amount: 35000,  category: 'rent',     description: 'Monthly shop rent',            customer: 'Landlord',     payment: 'transfer', date: fmt(new Date(today - 5*86400000)) },
-    { id: DB.genId(), type: 'income',  amount: 18000,  category: 'sales',    description: 'Evening market sales',         customer: 'Various',      payment: 'cash',     date: fmt(today) },
-    { id: DB.genId(), type: 'expense', amount: 3200,   category: 'utilities',description: 'Generator fuel',               customer: '',             payment: 'cash',     date: fmt(today) },
-  ];
-
-  demoTxs.forEach(t => DB.saveTransaction(t));
-
-  const demoProducts = [
-    { id: DB.genId(), name: 'Rice (50kg)', sku: 'RICE-50KG', category: 'Food', qty: 24, costPrice: 38000, sellingPrice: 45000, lowAlert: 5, unit: 'Bags' },
-    { id: DB.genId(), name: 'Vegetable Oil (5L)', sku: 'OIL-5L', category: 'Food', qty: 3, costPrice: 4500, sellingPrice: 6000, lowAlert: 5, unit: 'Pieces' },
-    { id: DB.genId(), name: 'Sugar (50kg)', sku: 'SUGAR-50', category: 'Food', qty: 0, costPrice: 42000, sellingPrice: 50000, lowAlert: 3, unit: 'Bags' },
-    { id: DB.genId(), name: 'Tomatoes (basket)', sku: 'TOM-BKT', category: 'Vegetables', qty: 12, costPrice: 3500, sellingPrice: 5000, lowAlert: 4, unit: 'Pieces' },
-    { id: DB.genId(), name: 'Bottled Water (pack)', sku: 'WAT-PKG', category: 'Beverages', qty: 48, costPrice: 1800, sellingPrice: 2500, lowAlert: 10, unit: 'Cartons' },
-  ];
-  demoProducts.forEach(p => DB.saveProduct(p));
-
-  const demoDebts = [
-    { id: DB.genId(), debtType: 'receivable', person: 'Ngozi Okonkwo',  phone: '08012345678', amount: 25000, date: fmt(new Date(today - 7*86400000)),  dueDate: fmt(new Date(today.setDate(today.getDate() + 7))),  description: 'Goods on credit – rice bags', status: 'pending' },
-    { id: DB.genId(), debtType: 'receivable', person: 'Alhaji Ibrahim',  phone: '08098765432', amount: 50000, date: fmt(new Date(today - 14*86400000)), dueDate: fmt(new Date(today - 3*86400000)),  description: 'Wholesale credit purchase',   status: 'overdue' },
-    { id: DB.genId(), debtType: 'payable',    person: 'Chukwu Distributors', phone: '09012222333', amount: 80000, date: fmt(new Date(today - 10*86400000)), dueDate: fmt(new Date(today.setDate(today.getDate() + 5))), description: 'Supply goods on credit',      status: 'pending' },
-  ];
-  demoDebts.forEach(d => DB.saveDebt(d));
+  // Purge any old demo data so user gets a 100% clean, brand new ledger!
+  DB.purgeDemoData();
 }

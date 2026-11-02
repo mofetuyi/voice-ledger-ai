@@ -37,41 +37,22 @@ class DatabaseEngine {
   }
 
   getDefaultSchema() {
-    const today = new Date().toISOString().split('T')[0];
     return {
-      version: 1,
+      version: 2,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       business: {
-        name: 'TuyiTek Merchant Store',
+        name: '',
         type: 'retail',
-        phone: '+2348000000000',
+        phone: '',
         language: 'en'
       },
-      transactions: [
-        { id: 'tx-1', type: 'income', amount: 45000, category: 'sales', description: 'Sold rice bags to customer', customer: 'Mama Chioma', payment: 'cash', date: today },
-        { id: 'tx-2', type: 'income', amount: 28500, category: 'services', description: 'Delivery service fee', customer: 'Alhaji Musa', payment: 'transfer', date: today },
-        { id: 'tx-3', type: 'expense', amount: 12000, category: 'supplies', description: 'Restock supplies from market', customer: 'Vendor', payment: 'cash', date: today },
-        { id: 'tx-4', type: 'income', amount: 67000, category: 'sales', description: 'Wholesale order payment', customer: 'Bello Stores', payment: 'transfer', date: today },
-        { id: 'tx-5', type: 'expense', amount: 8500, category: 'transport', description: 'Delivery truck fuel', customer: '', payment: 'cash', date: today },
-        { id: 'tx-6', type: 'expense', amount: 35000, category: 'rent', description: 'Monthly shop rent', customer: 'Landlord', payment: 'transfer', date: today }
-      ],
-      inventory: [
-        { id: 'inv-1', name: 'Rice (50kg)', sku: 'RICE-50KG', category: 'Food', qty: 24, costPrice: 38000, sellingPrice: 45000, lowAlert: 5, unit: 'Bags' },
-        { id: 'inv-2', name: 'Vegetable Oil (5L)', sku: 'OIL-5L', category: 'Food', qty: 3, costPrice: 4500, sellingPrice: 6000, lowAlert: 5, unit: 'Pieces' },
-        { id: 'inv-3', name: 'Sugar (50kg)', sku: 'SUGAR-50', category: 'Food', qty: 0, costPrice: 42000, sellingPrice: 50000, lowAlert: 3, unit: 'Bags' },
-        { id: 'inv-4', name: 'Tomatoes (basket)', sku: 'TOM-BKT', category: 'Vegetables', qty: 12, costPrice: 3500, sellingPrice: 5000, lowAlert: 4, unit: 'Pieces' },
-        { id: 'inv-5', name: 'Bottled Water (pack)', sku: 'WAT-PKG', category: 'Beverages', qty: 48, costPrice: 1800, sellingPrice: 2500, lowAlert: 10, unit: 'Cartons' }
-      ],
-      debts: [
-        { id: 'd-1', debtType: 'receivable', person: 'Ngozi Okonkwo', phone: '08012345678', amount: 25000, date: today, dueDate: today, description: 'Goods on credit - rice bags', status: 'pending' },
-        { id: 'd-2', debtType: 'receivable', person: 'Alhaji Ibrahim', phone: '08098765432', amount: 50000, date: today, dueDate: today, description: 'Wholesale credit purchase', status: 'overdue' },
-        { id: 'd-3', debtType: 'payable', person: 'Chukwu Distributors', phone: '09012222333', amount: 80000, date: today, dueDate: today, description: 'Supply goods on credit', status: 'pending' }
-      ],
+      users: [],
+      transactions: [],
+      inventory: [],
+      debts: [],
       invoices: [],
-      alerts: [
-        { id: 'al-1', type: 'warning', title: 'Low Stock Alert', message: 'Vegetable Oil (5L) is running low (3 remaining).', date: today, read: false }
-      ],
+      alerts: [],
       settings: {
         language: 'en',
         currency: '₦',
@@ -85,13 +66,105 @@ class DatabaseEngine {
       try {
         const raw = fs.readFileSync(DB_FILE, 'utf8');
         this.memoryState = JSON.parse(raw);
+
+        // Migrate to version 2 (Brand New clean state: purge all fake demo details)
+        if (!this.memoryState.version || this.memoryState.version < 2) {
+          this.memoryState.version = 2;
+          this.memoryState.transactions = [];
+          this.memoryState.inventory = [];
+          this.memoryState.debts = [];
+          this.memoryState.invoices = [];
+          this.memoryState.alerts = [];
+          if (this.memoryState.business?.name === 'TuyiTek Merchant Store') {
+            this.memoryState.business.name = '';
+          }
+          this.saveImmediate();
+        }
         return;
       } catch (err) {
-        console.error('Failed to parse database file, recovering with default schema:', err.message);
+        console.error('Failed to parse database file, recovering with clean schema:', err.message);
       }
     }
     this.memoryState = this.getDefaultSchema();
     this.saveImmediate();
+  }
+
+  // ── USER AUTHENTICATION ──
+  findUser(identifier) {
+    if (!identifier) return null;
+    const users = this.getCollection('users');
+    const cleanId = String(identifier).trim().toLowerCase();
+    return users.find(u =>
+      (u.phone && u.phone.toLowerCase() === cleanId) ||
+      (u.businessName && u.businessName.toLowerCase() === cleanId)
+    ) || null;
+  }
+
+  registerUser({ businessName, phone, pin, language = 'en', type = 'retail' }) {
+    if (!this.memoryState.users) this.memoryState.users = [];
+    const existing = this.findUser(phone) || this.findUser(businessName);
+    if (existing) {
+      // Update existing
+      existing.pin = String(pin).trim();
+      existing.businessName = businessName.trim();
+      existing.phone = (phone || '').trim();
+      existing.language = language;
+      existing.type = type;
+      existing.updatedAt = new Date().toISOString();
+      this.setBusiness({ name: businessName, type, phone, language });
+      this.persist();
+      return { id: existing.id, businessName: existing.businessName, phone: existing.phone, language: existing.language, type: existing.type };
+    }
+
+    const newUser = {
+      id: this.genId('usr'),
+      businessName: businessName.trim(),
+      phone: (phone || '').trim(),
+      pin: String(pin).trim(),
+      language,
+      type,
+      createdAt: new Date().toISOString()
+    };
+    this.memoryState.users.push(newUser);
+    this.setBusiness({ name: businessName, type, phone, language });
+    this.persist();
+    return { id: newUser.id, businessName: newUser.businessName, phone: newUser.phone, language: newUser.language, type: newUser.type };
+  }
+
+  loginUser(identifier, pin) {
+    const user = this.findUser(identifier);
+    if (!user) return { success: false, error: 'User not found' };
+    if (String(user.pin).trim() !== String(pin).trim()) {
+      return { success: false, error: 'Incorrect PIN' };
+    }
+    // Update active business identity
+    this.setBusiness({
+      name: user.businessName,
+      type: user.type || 'retail',
+      phone: user.phone || '',
+      language: user.language || 'en'
+    });
+    return {
+      success: true,
+      user: { id: user.id, businessName: user.businessName, phone: user.phone, language: user.language, type: user.type },
+      business: this.getBusiness(),
+      data: {
+        transactions: this.getCollection('transactions'),
+        inventory: this.getCollection('inventory'),
+        debts: this.getCollection('debts'),
+        invoices: this.getCollection('invoices')
+      }
+    };
+  }
+
+  clearAllData() {
+    this.memoryState.transactions = [];
+    this.memoryState.inventory = [];
+    this.memoryState.debts = [];
+    this.memoryState.invoices = [];
+    this.memoryState.alerts = [];
+    this.saveImmediate();
+    return true;
   }
 
   saveImmediate() {

@@ -67,6 +67,40 @@ async function handleApi(req, res, pathname) {
     });
   }
 
+  // ── AUTHENTICATION ROUTES ──
+  if (pathname === '/api/auth/register' && req.method === 'POST') {
+    const body = await parseJsonBody(req);
+    if (!body.businessName) {
+      return sendJson(res, 400, { error: 'businessName is required' });
+    }
+    const user = db.registerUser({
+      businessName: body.businessName,
+      phone: body.phone || '',
+      pin: body.pin || '1234',
+      language: body.language || 'en',
+      type: body.type || 'retail'
+    });
+    return sendJson(res, 200, { success: true, user, business: db.getBusiness() });
+  }
+
+  if (pathname === '/api/auth/login' && req.method === 'POST') {
+    const body = await parseJsonBody(req);
+    const result = db.loginUser(body.identifier, body.pin);
+    if (!result.success) {
+      return sendJson(res, 401, result);
+    }
+    return sendJson(res, 200, result);
+  }
+
+  if (pathname === '/api/auth/logout' && req.method === 'POST') {
+    return sendJson(res, 200, { success: true, message: 'Logged out successfully' });
+  }
+
+  if (pathname === '/api/data/reset' && req.method === 'POST') {
+    db.clearAllData();
+    return sendJson(res, 200, { success: true, message: 'Data cleared successfully' });
+  }
+
   // 2. Business profile
   if (pathname === '/api/business') {
     if (req.method === 'GET') {

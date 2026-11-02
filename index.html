@@ -116,7 +116,7 @@
       </div>
       <div class="backup-quick-row" style="padding: 10px 14px; display: flex; gap: 8px;">
         <button id="backupDataBtn" class="btn btn-ghost" style="flex:1; font-size:11px; padding:6px 8px;" title="Export Backup Data">💾 Backup</button>
-        <button id="demoDataBtn" class="btn btn-ghost" style="flex:1; font-size:11px; padding:6px 8px;" title="Load Sample Demo Data">⚡ Sample</button>
+        <button id="sidebarSignOutBtn" class="btn btn-ghost" style="flex:1; font-size:11px; padding:6px 8px; color:#ef4444;" onclick="App.confirmSignOut()">🚪 <span data-i18n="nav_sign_out">Sign Out</span></button>
       </div>
       <div class="powered-by" data-i18n="powered_by">Powered by <strong>TuyiTek Digital Solutions</strong></div>
     </div>
@@ -137,9 +137,22 @@
           <span class="voice-label-mini" id="voiceLabelMini" data-i18n="tap_to_speak">Tap to speak</span>
         </div>
       </div>
-      <div class="header-right">
+      <div class="header-right" style="position:relative;">
         <div class="header-date" id="headerDate"></div>
-        <div class="user-avatar" id="userAvatar" title="Business Profile — Click to edit" data-i18n-title="user_bo" onclick="App.openSetupModal()" style="cursor:pointer;">TT</div>
+        <div class="user-avatar" id="userAvatar" title="Account Menu" data-i18n-title="user_bo" onclick="App.toggleUserDropdown(event)" style="cursor:pointer;">TT</div>
+
+        <!-- User Dropdown Menu -->
+        <div class="user-dropdown-menu hidden" id="userDropdownMenu">
+          <div class="dropdown-biz-info">
+            <strong id="dropdownBizName">Author.Mojisola</strong>
+            <small id="dropdownBizPhone" style="color:var(--text-muted); display:block;">+234...</small>
+          </div>
+          <hr style="border:0; border-top:1px solid var(--border); margin:8px 0;" />
+          <button class="dropdown-item" onclick="App.openSetupModal(); App.closeUserDropdown();">⚙️ <span data-i18n="edit_profile">Edit Business Profile</span></button>
+          <button class="dropdown-item" onclick="App.confirmClearData(); App.closeUserDropdown();" style="color:#f59e0b;">🗑️ <span data-i18n="clear_ledger">Start Clean Ledger</span></button>
+          <hr style="border:0; border-top:1px solid var(--border); margin:8px 0;" />
+          <button class="dropdown-item" onclick="App.confirmSignOut(); App.closeUserDropdown();" style="color:#ef4444;">🚪 <span data-i18n="nav_sign_out">Sign Out</span></button>
+        </div>
       </div>
     </header>
 
@@ -1164,52 +1177,87 @@
     </div>
   </div>
 
-  <!-- Business Setup Modal (First Time) -->
+  <!-- Business Auth & Setup Modal -->
   <div class="modal-overlay hidden" id="setupModal">
-    <div class="modal setup-modal" style="position:relative;">
-      <button class="btn btn-ghost" onclick="App.closeSetupModal()" style="position:absolute; right:16px; top:16px; font-size:18px; padding:4px 8px;" title="Close">✕</button>
+    <div class="modal setup-modal" style="position:relative; max-width:460px;">
+      <button class="btn btn-ghost" id="setupModalCloseBtn" onclick="App.closeSetupModal()" style="position:absolute; right:16px; top:16px; font-size:18px; padding:4px 8px; display:none;" title="Close">✕</button>
+
       <div class="modal-logo">
-        <img src="logo.png" alt="TuyiTek" style="width:80px;height:80px;object-fit:contain;border-radius:16px;margin:0 auto 16px;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
+        <img src="logo.png" alt="TuyiTek" style="width:72px;height:72px;object-fit:contain;border-radius:16px;margin:0 auto 12px;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
         <div class="tuyitek-logo-lg" style="display:none">TT</div>
         <h2 data-i18n="welcome_voice_ledger">Welcome to Voice Ledger AI</h2>
         <p data-i18n="by_tuyitek">by TuyiTek Digital Solutions</p>
       </div>
-      <h3 data-i18n="setup_heading">Let's set up your business</h3>
-      <div class="form-group">
-        <label for="setupBusinessName" data-i18n="setup_business_name_label">Business Name</label>
-        <input type="text" id="setupBusinessName" placeholder="e.g. Mama Ngozi's Store" data-i18n-placeholder="setup_business_name_ph" />
+
+      <!-- Auth Switcher Tabs -->
+      <div class="auth-tabs" id="authTabs">
+        <button type="button" class="auth-tab-btn" id="tabBtnSignIn" onclick="App.switchAuthTab('signin')" data-i18n="tab_sign_in">Sign In</button>
+        <button type="button" class="auth-tab-btn active" id="tabBtnRegister" onclick="App.switchAuthTab('register')" data-i18n="tab_register">New Business</button>
       </div>
-      <div class="form-group">
-        <label for="setupBusinessType" data-i18n="setup_business_type_label">Business Type</label>
-        <select id="setupBusinessType">
-          <option value="retail">Retail Store</option>
-          <option value="food">Food & Restaurant</option>
-          <option value="services">Services</option>
-          <option value="wholesale">Wholesale / Distribution</option>
-          <option value="manufacturing">Manufacturing</option>
-          <option value="tech">Tech / Digital</option>
-          <option value="fashion">Fashion & Clothing</option>
-          <option value="pharmacy">Pharmacy / Medical</option>
-          <option value="agric">Agriculture</option>
-          <option value="other">Other</option>
-        </select>
+
+      <!-- VIEW 1: SIGN IN -->
+      <div id="authSignInView" style="display:none;">
+        <div class="form-group">
+          <label for="loginIdentifier" data-i18n="login_id_label">Business Phone or Name</label>
+          <input type="text" id="loginIdentifier" placeholder="e.g. +234803... or Author.Mojisola" data-i18n-placeholder="login_id_ph" />
+        </div>
+        <div class="form-group">
+          <label for="loginPin" data-i18n="login_pin_label">4-Digit Security PIN</label>
+          <input type="password" id="loginPin" maxlength="8" placeholder="••••" />
+        </div>
+        <button class="btn btn-primary btn-full" id="loginSubmitBtn" style="margin-top:16px;" data-i18n="sign_in_btn">Sign In 🚀</button>
+        <p style="text-align:center; font-size:12px; color:var(--text-muted); margin-top:14px;">
+          <span data-i18n="no_account_prompt">New business?</span>
+          <a href="#" onclick="App.switchAuthTab('register'); return false;" style="color:var(--primary-light); font-weight:600; text-decoration:none;" data-i18n="create_account_link">Create Account</a>
+        </p>
       </div>
-      <div class="form-group">
-        <label for="setupPhone" data-i18n="setup_phone_label">Business Phone</label>
-        <input type="tel" id="setupPhone" placeholder="+234..." />
+
+      <!-- VIEW 2: REGISTER / SETUP NEW BUSINESS -->
+      <div id="authRegisterView">
+        <div class="form-group">
+          <label for="setupBusinessName" data-i18n="setup_business_name_label">Business Name</label>
+          <input type="text" id="setupBusinessName" placeholder="e.g. Author.Mojisola" data-i18n-placeholder="setup_business_name_ph" />
+        </div>
+        <div class="form-group">
+          <label for="setupBusinessType" data-i18n="setup_business_type_label">Business Type</label>
+          <select id="setupBusinessType">
+            <option value="retail">Retail Store</option>
+            <option value="food">Food & Restaurant</option>
+            <option value="services">Services</option>
+            <option value="wholesale">Wholesale / Distribution</option>
+            <option value="manufacturing">Manufacturing</option>
+            <option value="tech">Tech / Digital</option>
+            <option value="fashion">Fashion & Clothing</option>
+            <option value="pharmacy">Pharmacy / Medical</option>
+            <option value="agric">Agriculture</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="setupPhone" data-i18n="setup_phone_label">Business Phone</label>
+          <input type="tel" id="setupPhone" placeholder="+234..." />
+        </div>
+        <div class="form-group">
+          <label for="setupPin" data-i18n="setup_pin_label">Create 4-Digit PIN (for Sign In)</label>
+          <input type="password" id="setupPin" maxlength="8" placeholder="e.g. 1234" value="1234" />
+        </div>
+        <div class="form-group">
+          <label for="setupLanguage" data-i18n="setup_language_label">Preferred Language</label>
+          <select id="setupLanguage">
+            <option value="en">English (US/UK)</option>
+            <option value="yo">Yorùbá (Pure)</option>
+            <option value="pcm">Naija (Pidgin)</option>
+            <option value="ig">Asụsụ Igbo</option>
+            <option value="ha">Harshen Hausa</option>
+            <option value="edo">Ẹ̀dó (Benin)</option>
+          </select>
+        </div>
+        <button class="btn btn-primary btn-full" id="setupCompleteBtn" style="margin-top:16px;" data-i18n="get_started_btn">Get Started 🚀</button>
+        <p style="text-align:center; font-size:12px; color:var(--text-muted); margin-top:14px;">
+          <span data-i18n="have_account_prompt">Already have an account?</span>
+          <a href="#" onclick="App.switchAuthTab('signin'); return false;" style="color:var(--primary-light); font-weight:600; text-decoration:none;" data-i18n="sign_in_link">Sign In with PIN</a>
+        </p>
       </div>
-      <div class="form-group">
-        <label for="setupLanguage" data-i18n="setup_language_label">Preferred Language</label>
-        <select id="setupLanguage">
-          <option value="en">English (US/UK)</option>
-          <option value="yo">Yorùbá (Pure)</option>
-          <option value="pcm">Naija (Pidgin)</option>
-          <option value="ig">Asụsụ Igbo</option>
-          <option value="ha">Harshen Hausa</option>
-          <option value="edo">Ẹ̀dó (Benin)</option>
-        </select>
-      </div>
-      <button class="btn btn-primary btn-full" id="setupCompleteBtn" data-i18n="get_started_btn">Get Started 🚀</button>
     </div>
   </div>
 

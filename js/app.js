@@ -26,14 +26,22 @@ const App = {
     // Background server synchronization
     DB.syncWithServer();
 
-    // 5. Check first-time setup status
-    if (!DB.isSetupDone()) {
-      this.openSetupModal();
+    // 5. Authentication & Setup status check
+    if (!DB.isLoggedIn()) {
+      const existingUser = DB.getUser();
+      this.openSetupModal(existingUser ? 'signin' : 'register');
     } else {
       this.closeSetupModal();
     }
 
-    // 6. Hide splash screen smoothly
+    // 6. Close dropdown on outside click
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#userAvatar') && !e.target.closest('#userDropdownMenu')) {
+        this.closeUserDropdown();
+      }
+    });
+
+    // 7. Hide splash screen smoothly
     setTimeout(() => {
       document.getElementById('splash-screen')?.classList.add('hidden');
     }, 900);
@@ -42,9 +50,19 @@ const App = {
   setupApp() {
     const business = DB.getBusiness();
     const userAvatar = document.getElementById('userAvatar');
-    if (userAvatar && business.name) {
-      userAvatar.textContent = business.name.substring(0, 2).toUpperCase();
+    if (userAvatar) {
+      if (business.name && business.name.trim().length > 0) {
+        userAvatar.textContent = business.name.substring(0, 2).toUpperCase();
+      } else {
+        userAvatar.textContent = '👤';
+      }
     }
+
+    const dropdownBizName = document.getElementById('dropdownBizName');
+    const dropdownBizPhone = document.getElementById('dropdownBizPhone');
+    if (dropdownBizName) dropdownBizName.textContent = business.name || 'My Business';
+    if (dropdownBizPhone) dropdownBizPhone.textContent = business.phone || '';
+
     this.refreshDashboard();
   },
 
@@ -72,12 +90,21 @@ const App = {
       this.showToast(`Èdè ti yí padà / Language switched! 🌍`, 'success');
     });
 
-    // Quick Data Backup & Sample Demo Data buttons
+    // Quick Data Backup & Sign Out buttons
     document.getElementById('backupDataBtn')?.addEventListener('click', () => this.exportBackupJSON());
-    document.getElementById('demoDataBtn')?.addEventListener('click', () => this.loadDemoDataPrompt());
+    document.getElementById('sidebarSignOutBtn')?.addEventListener('click', () => this.confirmSignOut());
 
-    // Setup modal completion
+    // Setup & Login buttons
     document.getElementById('setupCompleteBtn')?.addEventListener('click', () => this.completeSetup());
+    document.getElementById('loginSubmitBtn')?.addEventListener('click', () => this.submitLogin());
+
+    // Enter key triggers on PIN fields
+    document.getElementById('loginPin')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') this.submitLogin();
+    });
+    document.getElementById('setupPin')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') this.completeSetup();
+    });
 
     // Keyboard shortcut (Escape closes modals)
     document.addEventListener('keydown', (e) => {
@@ -476,23 +503,114 @@ const App = {
     this.showToast('Complete business backup exported! 💾', 'success');
   },
 
-  loadDemoDataPrompt() {
-    if (confirm('Load sample Nigerian SME demo data (Rice, Palm Oil, Sales, Debts)?')) {
-      localStorage.removeItem(DB.KEYS.SETUP_DONE);
-      seedDemoData();
-      this.refreshDashboard();
-      Ledger.render();
-      Inventory.populateCategories();
-      Inventory.render();
-      DebtManager.render();
-      this.showToast('Sample business data loaded! ⚡', 'success');
+  // ── AUTHENTICATION & BUSINESS PROFILE ──
+  switchAuthTab(tab) {
+    const isSignIn = tab === 'signin';
+    const tabSignIn = document.getElementById('tabBtnSignIn');
+    const tabRegister = document.getElementById('tabBtnRegister');
+    const viewSignIn = document.getElementById('authSignInView');
+    const viewRegister = document.getElementById('authRegisterView');
+
+    if (tabSignIn && tabRegister && viewSignIn && viewRegister) {
+      if (isSignIn) {
+        tabSignIn.classList.add('active');
+        tabRegister.classList.remove('active');
+        viewSignIn.style.display = 'block';
+        viewRegister.style.display = 'none';
+
+        // Pre-fill last known identifier if available
+        const user = DB.getUser() || DB.getBusiness();
+        const idInput = document.getElementById('loginIdentifier');
+        if (idInput && (user.phone || user.name)) {
+          idInput.value = user.phone || user.name;
+        }
+      } else {
+        tabRegister.classList.add('active');
+        tabSignIn.classList.remove('active');
+        viewRegister.style.display = 'block';
+        viewSignIn.style.display = 'none';
+      }
     }
   },
 
-  completeSetup() {
+  async submitLogin() {
+    const idInput = document.getElementById('loginIdentifier')?.value?.trim();
+    const pinInput = document.getElementById('loginPin')?.value?.trim();
+
+    if (!idInput) {
+      this.showToast('Please enter your business phone or name.', 'error');
+      return;
+    }
+    if (!pinInput) {
+      this.showToast('Please enter your 4-digit security PIN.', 'error');
+      return;
+    }
+
+    // Try backend authentication first
+    let authenticated = false;
+    let authUser = null;
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ identifier: idInput, pin: pinInput })
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success) {
+          authenticated = true;
+          authUser = json.user;
+          if (json.business) DB.setBusiness(json.business);
+          if (json.data) {
+            if (Array.isArray(json.data.transactions)) DB.set(DB.KEYS.TRANSACTIONS, json.data.transactions);
+            if (Array.isArray(json.data.inventory)) DB.set(DB.KEYS.INVENTORY, json.data.inventory);
+            if (Array.isArray(json.data.debts)) DB.set(DB.KEYS.DEBTS, json.data.debts);
+          }
+        }
+      }
+    } catch (e) {
+      // Offline fallback
+    }
+
+    // Local authentication check
+    if (!authenticated) {
+      const storedUser = DB.getUser();
+      const storedBiz = DB.getBusiness();
+
+      const matchesPhone = storedUser?.phone && storedUser.phone.toLowerCase() === idInput.toLowerCase();
+      const matchesName = (storedUser?.businessName || storedBiz?.name) && (storedUser?.businessName || storedBiz?.name).toLowerCase() === idInput.toLowerCase();
+      const matchesPin = storedUser?.pin ? (String(storedUser.pin) === pinInput) : (pinInput === '1234');
+
+      if ((matchesPhone || matchesName) && matchesPin) {
+        authenticated = true;
+        authUser = storedUser || { businessName: storedBiz.name, phone: storedBiz.phone };
+      }
+    }
+
+    if (authenticated) {
+      DB.setSession({ token: 'sess_' + Date.now(), loggedInAt: new Date().toISOString() });
+      DB.setSetupDone();
+      if (authUser) DB.setUser(authUser);
+
+      this.closeSetupModal();
+      this.setupApp();
+      this.refreshDashboard();
+      Ledger.render();
+      Inventory.render();
+      DebtManager.render();
+
+      this.showToast(`Welcome back, ${authUser?.businessName || 'Business Owner'}! 🎉`, 'success');
+    } else {
+      this.showToast('Incorrect credentials. Please verify your phone/name and PIN.', 'error');
+    }
+  },
+
+  async completeSetup() {
     const name     = document.getElementById('setupBusinessName')?.value?.trim();
     const type     = document.getElementById('setupBusinessType')?.value || 'retail';
     const phone    = document.getElementById('setupPhone')?.value?.trim() || '';
+    const pin      = document.getElementById('setupPin')?.value?.trim() || '1234';
     const language = document.getElementById('setupLanguage')?.value || 'en';
 
     if (!name) {
@@ -500,30 +618,102 @@ const App = {
       return;
     }
 
+    const userData = { businessName: name, phone, pin, language, type };
+    DB.setUser(userData);
     DB.setBusiness({ name, type, phone, language });
     DB.setSettings({ language });
+    DB.setSession({ token: 'sess_' + Date.now(), loggedInAt: new Date().toISOString() });
     DB.setSetupDone();
+
+    // Register with server if online
+    try {
+      fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData)
+      }).catch(() => {});
+    } catch (e) {}
 
     this.closeSetupModal();
     I18N.setLanguage(language);
 
     this.setupApp();
-    this.showToast(`Welcome to Voice Ledger AI, ${name}! 🎉 Powered by TuyiTek Digital Solutions`, 'success');
+    this.refreshDashboard();
+    Ledger.render();
+    Inventory.render();
+    DebtManager.render();
+
+    this.showToast(`Welcome to Voice Ledger AI, ${name}! 🎉 Brand new ledger ready.`, 'success');
   },
 
-  openSetupModal() {
+  confirmSignOut() {
+    if (confirm('Are you sure you want to sign out of your business?')) {
+      DB.logout();
+      this.showToast('Signed out successfully. 👋', 'info');
+      this.setupApp();
+      this.openSetupModal('signin');
+    }
+  },
+
+  confirmClearData() {
+    if (confirm('⚠️ Start Clean Ledger: This will wipe out all transactions, inventory, and debts so you can start completely brand new. Continue?')) {
+      DB.clearAllData();
+      try {
+        fetch('/api/data/reset', { method: 'POST' }).catch(() => {});
+      } catch (e) {}
+
+      this.refreshDashboard();
+      Ledger.render();
+      Inventory.render();
+      DebtManager.render();
+      Alerts.generateAlerts();
+      this.showToast('All data cleared! Your business ledger is brand new. ✨', 'success');
+    }
+  },
+
+  toggleUserDropdown(e) {
+    if (e) e.stopPropagation();
+    const dropdown = document.getElementById('userDropdownMenu');
+    if (!dropdown) return;
+    const isHidden = dropdown.classList.contains('hidden');
+    if (isHidden) {
+      const biz = DB.getBusiness();
+      const nameEl = document.getElementById('dropdownBizName');
+      const phoneEl = document.getElementById('dropdownBizPhone');
+      if (nameEl) nameEl.textContent = biz.name || 'Business Owner';
+      if (phoneEl) phoneEl.textContent = biz.phone || '';
+      dropdown.classList.remove('hidden');
+    } else {
+      dropdown.classList.add('hidden');
+    }
+  },
+
+  closeUserDropdown() {
+    document.getElementById('userDropdownMenu')?.classList.add('hidden');
+  },
+
+  openSetupModal(initialTab = 'register') {
     const modal = document.getElementById('setupModal');
     if (!modal) return;
+
+    const closeBtn = document.getElementById('setupModalCloseBtn');
+    if (closeBtn) {
+      // Only allow closing if user is already logged in
+      closeBtn.style.display = DB.isLoggedIn() ? 'block' : 'none';
+    }
+
     const biz = DB.getBusiness();
     const nameEl = document.getElementById('setupBusinessName');
     const typeEl = document.getElementById('setupBusinessType');
     const phoneEl = document.getElementById('setupPhone');
     const langEl = document.getElementById('setupLanguage');
 
-    if (nameEl && biz.name && biz.name !== 'My Business') nameEl.value = biz.name;
+    if (nameEl && biz.name) nameEl.value = biz.name;
     if (typeEl && biz.type) typeEl.value = biz.type;
     if (phoneEl && biz.phone) phoneEl.value = biz.phone;
     if (langEl && biz.language) langEl.value = biz.language;
+
+    this.switchAuthTab(initialTab);
 
     modal.classList.remove('hidden');
     modal.style.display = 'flex';
