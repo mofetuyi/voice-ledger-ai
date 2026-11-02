@@ -304,6 +304,40 @@ If the user tells you about a sale they made, money they received, or an expense
 
   async queryGemini(query, lang) {
     const key = DB.getGeminiKey();
+
+    // 1. Try Backend Gateway first (uses server-side environment variables on Render)
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
+
+      const res = await fetch('/api/ai/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, lang, apiKey: key || undefined }),
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data && data.text) {
+          let actionHtml = '';
+          if (data.action) {
+            const actionResult = this.handleTransactionAction(data.action, lang);
+            actionHtml = actionResult.actionHtml || '';
+          }
+          return {
+            text: data.text,
+            actionHtml,
+            source: data.source || 'gemini'
+          };
+        }
+      }
+    } catch (backendErr) {
+      console.warn('Backend AI gateway unavailable, attempting direct fallback:', backendErr.message);
+    }
+
+    // 2. Direct client-side Gemini fallback if client key exists
     if (!key) throw new Error('No Gemini API key configured');
 
     const systemContext = this.buildBusinessContext(lang);

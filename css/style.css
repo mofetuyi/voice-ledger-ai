@@ -469,7 +469,10 @@ body {
   display: flex; align-items: center; justify-content: center;
   padding: 20px;
 }
-.modal-overlay.hidden { display: none; }
+.modal-overlay.hidden,
+.modal-overlay[hidden] {
+  display: none !important;
+}
 .modal {
   background: var(--bg-card);
   border: 1px solid var(--border);

@@ -139,7 +139,7 @@
       </div>
       <div class="header-right">
         <div class="header-date" id="headerDate"></div>
-        <div class="user-avatar" id="userAvatar" title="Business Owner" data-i18n-title="user_bo">TT</div>
+        <div class="user-avatar" id="userAvatar" title="Business Profile — Click to edit" data-i18n-title="user_bo" onclick="App.openSetupModal()" style="cursor:pointer;">TT</div>
       </div>
     </header>
 
@@ -1165,8 +1165,9 @@
   </div>
 
   <!-- Business Setup Modal (First Time) -->
-  <div class="modal-overlay" id="setupModal">
-    <div class="modal setup-modal">
+  <div class="modal-overlay hidden" id="setupModal">
+    <div class="modal setup-modal" style="position:relative;">
+      <button class="btn btn-ghost" onclick="App.closeSetupModal()" style="position:absolute; right:16px; top:16px; font-size:18px; padding:4px 8px;" title="Close">✕</button>
       <div class="modal-logo">
         <img src="logo.png" alt="TuyiTek" style="width:80px;height:80px;object-fit:contain;border-radius:16px;margin:0 auto 16px;display:block;" onerror="this.style.display='none';this.nextElementSibling.style.display='block'" />
         <div class="tuyitek-logo-lg" style="display:none">TT</div>

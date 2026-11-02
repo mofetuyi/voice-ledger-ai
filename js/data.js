@@ -28,7 +28,11 @@ const DB = {
 
   // Business
   getBusiness()     { return this.get(this.KEYS.BUSINESS) || { name: 'My Business', type: 'retail', phone: '', language: 'en' }; },
-  setBusiness(data) { return this.set(this.KEYS.BUSINESS, data); },
+  setBusiness(data) {
+    const res = this.set(this.KEYS.BUSINESS, data);
+    this.triggerSync();
+    return res;
+  },
 
   // Transactions
   getTransactions()  { return this.get(this.KEYS.TRANSACTIONS) || []; },
@@ -37,11 +41,15 @@ const DB = {
     const idx = txs.findIndex(t => t.id === tx.id);
     if (idx >= 0) txs[idx] = tx;
     else txs.unshift(tx);
-    return this.set(this.KEYS.TRANSACTIONS, txs);
+    const res = this.set(this.KEYS.TRANSACTIONS, txs);
+    this.triggerSync();
+    return res;
   },
   deleteTransaction(id) {
     const txs = this.getTransactions().filter(t => t.id !== id);
-    return this.set(this.KEYS.TRANSACTIONS, txs);
+    const res = this.set(this.KEYS.TRANSACTIONS, txs);
+    this.triggerSync();
+    return res;
   },
 
   // Inventory
@@ -51,10 +59,14 @@ const DB = {
     const idx = inv.findIndex(i => i.id === p.id);
     if (idx >= 0) inv[idx] = p;
     else inv.unshift(p);
-    return this.set(this.KEYS.INVENTORY, inv);
+    const res = this.set(this.KEYS.INVENTORY, inv);
+    this.triggerSync();
+    return res;
   },
   deleteProduct(id) {
-    return this.set(this.KEYS.INVENTORY, this.getInventory().filter(i => i.id !== id));
+    const res = this.set(this.KEYS.INVENTORY, this.getInventory().filter(i => i.id !== id));
+    this.triggerSync();
+    return res;
   },
 
   // Debts
@@ -64,15 +76,23 @@ const DB = {
     const idx = debts.findIndex(x => x.id === d.id);
     if (idx >= 0) debts[idx] = d;
     else debts.unshift(d);
-    return this.set(this.KEYS.DEBTS, debts);
+    const res = this.set(this.KEYS.DEBTS, debts);
+    this.triggerSync();
+    return res;
   },
   deleteDebt(id) {
-    return this.set(this.KEYS.DEBTS, this.getDebts().filter(d => d.id !== id));
+    const res = this.set(this.KEYS.DEBTS, this.getDebts().filter(d => d.id !== id));
+    this.triggerSync();
+    return res;
   },
   updateDebtStatus(id, status) {
     const debts = this.getDebts();
     const debt = debts.find(d => d.id === id);
-    if (debt) { debt.status = status; this.set(this.KEYS.DEBTS, debts); }
+    if (debt) {
+      debt.status = status;
+      this.set(this.KEYS.DEBTS, debts);
+      this.triggerSync();
+    }
   },
 
   // Invoices
@@ -82,10 +102,59 @@ const DB = {
     const idx = invs.findIndex(i => i.id === inv.id);
     if (idx >= 0) invs[idx] = inv;
     else invs.unshift(inv);
-    return this.set(this.KEYS.INVOICES, invs);
+    const res = this.set(this.KEYS.INVOICES, invs);
+    this.triggerSync();
+    return res;
   },
   deleteInvoice(id) {
-    return this.set(this.KEYS.INVOICES, this.getInvoices().filter(i => i.id !== id));
+    const res = this.set(this.KEYS.INVOICES, this.getInvoices().filter(i => i.id !== id));
+    this.triggerSync();
+    return res;
+  },
+
+  // ── SERVER SYNC ENGINE ──
+  _syncTimeout: null,
+  triggerSync() {
+    if (typeof navigator !== 'undefined' && !navigator.onLine) return;
+    clearTimeout(this._syncTimeout);
+    this._syncTimeout = setTimeout(() => this.syncWithServer(), 1500);
+  },
+
+  async syncWithServer() {
+    if (typeof window === 'undefined' || typeof fetch === 'undefined') return;
+    try {
+      const payload = {
+        business: this.getBusiness(),
+        settings: this.getSettings(),
+        transactions: this.getTransactions(),
+        inventory: this.getInventory(),
+        debts: this.getDebts(),
+        invoices: this.getInvoices()
+      };
+
+      const res = await fetch('/api/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        const json = await res.json();
+        if (json && json.data) {
+          if (Array.isArray(json.data.transactions) && json.data.transactions.length > this.getTransactions().length) {
+            this.set(this.KEYS.TRANSACTIONS, json.data.transactions);
+          }
+          if (Array.isArray(json.data.inventory) && json.data.inventory.length > this.getInventory().length) {
+            this.set(this.KEYS.INVENTORY, json.data.inventory);
+          }
+          if (Array.isArray(json.data.debts) && json.data.debts.length > this.getDebts().length) {
+            this.set(this.KEYS.DEBTS, json.data.debts);
+          }
+        }
+      }
+    } catch (e) {
+      // Offline fallback
+    }
   },
 
   DEFAULT_GEMINI_KEY: '',

@@ -17,3 +17,8 @@ verify-*.js
 .env.local
 .vscode/
 .idea/
+
+# Data Store & Backups
+data/*.json
+data/*.tmp
+data/backups/

@@ -23,7 +23,17 @@ const App = {
     this.setupApp();
     this.updateHeaderDate();
 
-    // 5. Hide splash screen smoothly
+    // Background server synchronization
+    DB.syncWithServer();
+
+    // 5. Check first-time setup status
+    if (!DB.isSetupDone()) {
+      this.openSetupModal();
+    } else {
+      this.closeSetupModal();
+    }
+
+    // 6. Hide splash screen smoothly
     setTimeout(() => {
       document.getElementById('splash-screen')?.classList.add('hidden');
     }, 900);
@@ -494,11 +504,38 @@ const App = {
     DB.setSettings({ language });
     DB.setSetupDone();
 
-    document.getElementById('setupModal')?.classList.remove('active');
+    this.closeSetupModal();
     I18N.setLanguage(language);
 
     this.setupApp();
     this.showToast(`Welcome to Voice Ledger AI, ${name}! 🎉 Powered by TuyiTek Digital Solutions`, 'success');
+  },
+
+  openSetupModal() {
+    const modal = document.getElementById('setupModal');
+    if (!modal) return;
+    const biz = DB.getBusiness();
+    const nameEl = document.getElementById('setupBusinessName');
+    const typeEl = document.getElementById('setupBusinessType');
+    const phoneEl = document.getElementById('setupPhone');
+    const langEl = document.getElementById('setupLanguage');
+
+    if (nameEl && biz.name && biz.name !== 'My Business') nameEl.value = biz.name;
+    if (typeEl && biz.type) typeEl.value = biz.type;
+    if (phoneEl && biz.phone) phoneEl.value = biz.phone;
+    if (langEl && biz.language) langEl.value = biz.language;
+
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';
+  },
+
+  closeSetupModal() {
+    const modal = document.getElementById('setupModal');
+    if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('active');
+      modal.style.display = 'none';
+    }
   },
 
   updateHeaderDate() {
